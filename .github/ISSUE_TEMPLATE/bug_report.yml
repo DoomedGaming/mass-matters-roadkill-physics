@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a Mass Matters gameplay, compatibility, or multiplayer issue.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mass Matters 1.0.0 is tested only on Project Zomboid Build 42.20 stable. Please include enough detail to reproduce the vehicle contact.
+  - type: input
+    id: game-build
+    attributes:
+      label: Exact Project Zomboid build
+      description: Copy the full build shown by the game, not only "Build 42."
+      placeholder: "42.20"
+    validations:
+      required: true
+  - type: dropdown
+    id: game-mode
+    attributes:
+      label: Game mode
+      options:
+        - Single-player
+        - Listen server host
+        - Listen server client
+        - Dedicated server client
+    validations:
+      required: true
+  - type: input
+    id: vehicle-target
+    attributes:
+      label: Vehicle and target
+      description: Include the vehicle model/class and whether the target was a live animal, standing/prone live zombie, or corpse.
+      placeholder: "Standard car hitting a live rat"
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Mass Matters sandbox values
+      description: List AnimalImpulseMultiplier, ZombieImpulseMultiplier, and CorpseImpulseMultiplier.
+      placeholder: "Animal 1.0, Zombie 0.0, Corpse 1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps and observed result
+      description: Include approximate speed, contact angle, target count, expected result, and what actually happened.
+    validations:
+      required: true
+  - type: textarea
+    id: other-mods
+    attributes:
+      label: Other enabled mods
+      description: List vehicle, animal, physics, or corpse-related mods first. State "none" if testing Mass Matters alone.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Attach or paste the client/server lines around DoomedRoadkillPhysics startup, setting changes, corrections, warnings, or errors.
+      render: text

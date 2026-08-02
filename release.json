@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "projectZomboid": {
+    "version": "42.20.0",
+    "steamBuildId": "24449119",
+    "jarSha256": "e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8"
+  },
+  "modId": "DoomedRoadkillPhysics",
+  "distribution": "steam-workshop-lua-only"
+}

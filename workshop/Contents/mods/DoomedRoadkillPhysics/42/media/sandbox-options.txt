@@ -1,0 +1,31 @@
+VERSION = 1,
+
+option DoomedRoadkillPhysics.AnimalImpulseMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 2.0,
+	default = 1.0,
+	page = DoomedRoadkillPhysics,
+	translation = DoomedRoadkillPhysics_AnimalImpulseMultiplier,
+}
+
+option DoomedRoadkillPhysics.CorpseImpulseMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 2.0,
+	default = 1.0,
+	page = DoomedRoadkillPhysics,
+	translation = DoomedRoadkillPhysics_CorpseImpulseMultiplier,
+}
+
+option DoomedRoadkillPhysics.ZombieImpulseMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 1.0,
+	default = 1.0,
+	page = DoomedRoadkillPhysics,
+	translation = DoomedRoadkillPhysics_ZombieImpulseMultiplier,
+}

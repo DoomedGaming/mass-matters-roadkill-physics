@@ -1,0 +1,55 @@
+local corePath = assert(arg[1], "core Lua path is required")
+dofile(corePath)
+
+local Core = assert(DoomedRoadkillPhysics)
+
+assert(Core.isTargetGameVersion("42.20"))
+assert(not Core.isTargetGameVersion("42.20.1"))
+assert(not Core.isTargetGameVersion("142.20"))
+
+local function assertNear(expected, actual, tolerance)
+    tolerance = tolerance or 0.0001
+    assert(actual ~= nil, "actual value is nil")
+    assert(math.abs(expected - actual) <= tolerance,
+        string.format("expected %.8f, got %.8f", expected, actual))
+end
+
+-- A 0.1 kg rat hit by a 1000 kg vehicle at 10 internal speed units.
+local animalExcess = Core.animalImpulseExcess(1000, 0.1, 10, -1, true, 1)
+local vanillaAnimal = 1000 * 7 * 10 / 15 + 1
+local desiredAnimal = 0.1 * 12 * 10 / 15 + 0.1 / 100
+assertNear(vanillaAnimal - desiredAnimal, animalExcess)
+
+-- The upper multiplier bound still cannot exceed vanilla.
+assertNear(0.0, Core.animalImpulseExcess(1000, 1000, 10, -1, true, 99))
+
+-- A falldown contact has only the fixed vanilla 1.0 impulse to scale.
+assertNear(0.999, Core.animalImpulseExcess(1000, 0.1, 10, -1, false, 1))
+
+-- A standing 100 kg zombie at speed 5 has a vanilla scalar of 400.
+assertNear(0.0, Core.zombieImpulseExcess(100, 5, -1, false, 1))
+assertNear(200.0, Core.zombieImpulseExcess(100, 5, -1, false, 0.5))
+assertNear(400.0, Core.zombieImpulseExcess(100, 5, -1, false, 0))
+
+-- Prone pedestrian slowdown is one quarter of the standing value.
+assertNear(50.0, Core.zombieImpulseExcess(100, 5, -1, true, 0.5))
+assertNear(0.0, Core.zombieImpulseExcess(100, 5, 1, false, 0))
+assertNear(0.0, Core.zombieImpulseExcess(100, 0, -1, false, 0))
+assertNear(0.0, Core.zombieImpulseExcess(100, 0.049, -1, false, 0))
+assertNear(4.0, Core.zombieImpulseExcess(100, 0.05, -1, false, 0))
+assertNear(0.0, Core.zombieImpulseExcess(100, 5, -1, false, 99))
+
+-- A normal 100 kg corpse under a 1000 kg vehicle uses corpseSize 0.1.
+assertNear(0.1, Core.corpseSizeForVehicle(nil, 100, 1000, 1))
+assertNear(0.2, Core.corpseSizeForVehicle(nil, 100, 1000, 2))
+assertNear(0.0, Core.corpseSizeForVehicle(nil, 100, 1000, 0))
+
+-- Existing content-authored values remain an upper bound.
+assertNear(0.05, Core.corpseSizeForVehicle(0.05, 100, 1000, 1))
+assertNear(0.0, Core.corpseSizeForVehicle(-1, 100, 1000, 1))
+
+assert(Core.animalImpulseExcess(1000, 0, 10, -1, true, 1) == nil)
+assert(Core.zombieImpulseExcess(0, 10, -1, false, 0) == nil)
+assert(Core.corpseSizeForVehicle(nil, 100, 0, 1) == nil)
+
+print("Pure Lua mass formula tests passed.")
