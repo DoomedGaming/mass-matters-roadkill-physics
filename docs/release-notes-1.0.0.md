@@ -2,14 +2,14 @@
 
 First public release of Mass Matters: Roadkill Physics.
 
-Tiny animals should not stop a car, and a corpse should not launch a truck. This pure-Lua mod makes vehicle reactions to live animals and corpses depend on body mass instead of producing disproportionate reactions from vehicle mass. It also adds independent tuning for the horizontal slowdown caused by live-zombie impacts.
+Tiny animals should not stop a car, and a corpse should not launch a truck. Mass Matters makes vehicle reactions to live animals and corpses depend on body mass instead of producing disproportionate reactions from vehicle mass. It also adds independent tuning for the horizontal slowdown caused by live-zombie impacts.
 
 ## Highlights
 
 - Mass-aware reactions for mice, rats, rabbits, and other live animals.
 - Mass-aware corpse wheel reactions for regular cars through heavy trucks.
 - Configurable live-zombie horizontal slowdown.
-- Pure Steam Workshop Lua package: no patcher, launcher, Java overlay, or modified game files.
+- Normal Steam Workshop installation and multiplayer mod distribution.
 - Single-player and multiplayer support through normal vehicle authority and synchronization.
 - Existing worlds require no save migration.
 - Vanilla damage, sounds, vehicle-part condition, traction, drivetrain, wall/tree impacts, and vehicle-to-vehicle collisions remain unchanged.
@@ -38,4 +38,4 @@ A normal server restart is required when adding or updating the mod. Existing wo
 - `mass-matters-roadkill-physics-v1.0.0.zip`
 - `SHA256SUMS.txt`
 
-The ZIP contains the Lua-only Workshop source tree, manual-install files, license, and release documentation. Verify it with `sha256sum -c SHA256SUMS.txt`.
+The ZIP contains the Workshop source tree, manual-install files, license, and release documentation. Verify it with `sha256sum -c SHA256SUMS.txt`.

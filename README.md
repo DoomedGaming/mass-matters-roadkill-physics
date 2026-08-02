@@ -3,7 +3,7 @@
 [![Verify](https://github.com/DoomedGaming/mass-matters-roadkill-physics/actions/workflows/verify.yml/badge.svg)](https://github.com/DoomedGaming/mass-matters-roadkill-physics/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
-Mass Matters is a pure Lua vehicle-physics balance mod for Project Zomboid. Its purpose is simple: the vehicle reaction should make sense for the mass of what was hit.
+Mass Matters is a vehicle-physics balance mod for Project Zomboid. Its purpose is simple: the vehicle reaction should make sense for the mass of what was hit.
 
 It addresses three disproportionate Build 42.20 reactions:
 
@@ -11,7 +11,7 @@ It addresses three disproportionate Build 42.20 reactions:
 - a zombie or animal corpse can pitch or launch a vehicle because the vanilla wheel lift also scales with vehicle mass;
 - the forward slowdown from hitting a live zombie can be tuned independently without changing its damage or prone wheel lift.
 
-It installs as an ordinary Steam Workshop mod, works with multiplayer's normal mod distribution, and can be added to an existing world without save migration. It does not patch `projectzomboid.jar`, install Java classes, replace a launcher, or modify any game file.
+It works with multiplayer's normal Workshop distribution and can be added to an existing world without save migration.
 
 ## Compatibility warning
 
@@ -25,8 +25,6 @@ The exact audited local build is Steam build ID `24449119`, with this game JAR:
 e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8  projectzomboid.jar
 ```
 
-The source, release ZIP, and Workshop upload tree contain Lua and ordinary mod assets only. No Project Zomboid game files are redistributed.
-
 ## Features
 
 - Mass-aware live-animal reactions so mice, rats, rabbits, and other small animals do not behave like concrete barriers.
@@ -38,9 +36,9 @@ The source, release ZIP, and Workshop upload tree contain Lua and ordinary mod a
 
 ## Known limitation
 
-`ZombieImpulseMultiplier` controls the horizontal pedestrian slowdown from a live zombie. It does **not** remove the separate vertical wheel lift and pitch/roll torque produced after a living zombie falls prone beneath the wheels. Build 42.20 stores those final forces in private per-wheel state that a release-mode pure Lua mod cannot inspect or scale safely. An approximate counterforce could make crowded contacts less stable, so version 1.0.0 deliberately leaves that path vanilla.
+`ZombieImpulseMultiplier` controls the horizontal pedestrian slowdown from a live zombie. It does **not** remove the separate vertical wheel lift and pitch/roll torque produced after a living zombie falls prone beneath the wheels. Build 42.20 does not expose those final per-wheel forces to mods. An approximate counterforce could make crowded contacts less stable, so version 1.0.0 deliberately leaves that path vanilla.
 
-## How the pure mod works
+## How it works
 
 Build 42.20 exposes the necessary vehicle methods to Lua even though it does not expose a replaceable collision callback.
 
@@ -50,7 +48,7 @@ Sustained multiplayer overlap needs a separate conservative path. Build 42.20's 
 
 For a live zombie, the same contact timing scales only the horizontal pedestrian impulse responsible for forward slowdown. `ZombieImpulseMultiplier` keeps vanilla slowdown at `1.0`, approximately half at `0.5`, or none of that forward impulse at `0.0`. The correction uses the public `applyImpulseGeneric` API at the vehicle center, using the engine-recorded `hitDir` when available and a positional fallback otherwise. The normal `hitDir` path is no longer redirected by a zombie that moved after impact, and the centered correction remains torque-free. The conservative multiplayer fallback for a standing zombie still requires the same vehicle/zombie pair to remain both persistently contacted and geometrically overlapped before and after the update.
 
-The separate vertical wheel-lift and off-center torque produced when a wheel runs over a prone living zombie remain vanilla. Build 42.20 keeps the exact pending values in private per-wheel state that a release-mode pure Lua mod cannot safely read or scale; calling the public prone collision test again would itself rewrite that state. The mod does not use reflection, a class patch, or a second side-effectful collision call to bypass that boundary.
+The separate vertical wheel-lift and off-center torque produced when a wheel runs over a prone living zombie remain vanilla. Build 42.20 keeps the exact pending values in private per-wheel state that mods cannot safely read or scale; calling the public prone collision test again would itself rewrite that state.
 
 For a corpse, the mod repeats vanilla's nearby-body scan in the same order after the vanilla scan. It temporarily substitutes a mass-aware `corpseSize` and calls `testCollisionWithCorpse(body, false)`. Build 42.20 keeps one pending corpse impulse per wheel, so this replaces the oversized value before the next physics step; `false` prevents a duplicate sound. The body's original mod data is restored immediately.
 
