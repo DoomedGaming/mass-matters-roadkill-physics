@@ -2,10 +2,10 @@
 
 ## Normal Workshop installation
 
-Publish the staged item privately first and record Steam's numeric Workshop ID. Then append the item and Mod ID to the server's existing semicolon-separated settings:
+Use the existing [Workshop item 3776615501](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501). Existing installations keep the same identifiers. For a new installation, append them to the server's existing semicolon-separated settings:
 
 ```ini
-WorkshopItems=<numeric Workshop ID>
+WorkshopItems=3776615501
 Mods=DoomedRoadkillPhysics
 DoLuaChecksum=true
 ```
@@ -16,9 +16,15 @@ The server and all clients use the same ordinary Workshop package. There is no J
 
 An existing world does not require save migration. If its sandbox data predates version 0.3.0 and has no `ZombieImpulseMultiplier`, the mod uses `1.0`, preserving vanilla live-zombie forward slowdown until the administrator explicitly tunes it.
 
+## Versioned package
+
+Version 1.1.0 preserves the released `42/` and `common/` files unchanged and adds `42.21/`. The game selects the profile appropriate to its version. Keep the full package on server and clients; do not distribute only the new directory.
+
+Original connected-driving evidence applies to 42.20.0. The 42.21 engine audit and automated tests pass, but connected gameplay, authority handoffs, latency behavior, and anticheat checks remain pending. See the [compatibility audit](compatibility-42.21.md).
+
 ## Authority model
 
-Build 42.20 simulates an actively controlled multiplayer vehicle on an authorized client. The mod's `OnTickEvenPaused` snapshot, `OnTick` correction pass, and all animal, live-zombie, and corpse corrections therefore run only when `vehicle:isLocalPhysicSim()` is true:
+The audited Build 42.20 and 42.21 engines simulate an actively controlled multiplayer vehicle on an authorized client. The mod's `OnTickEvenPaused` snapshot, `OnTick` correction pass, and all animal, live-zombie, and corpse corrections therefore run only when `vehicle:isLocalPhysicSim()` is true:
 
 - the current vehicle authority queues the corrected impulse;
 - the dedicated server loads and checks the Lua package but does not try to run client physics;
@@ -26,13 +32,13 @@ Build 42.20 simulates an actively controlled multiplayer vehicle on an authorize
 
 No custom networking or compatibility handshake is required. Keep `DoLuaChecksum=true` so clients use the server's Lua content rather than an altered local copy.
 
-The initial live-animal or live-zombie hit uses an exact false-to-true persistent-contact edge. Sustained overlap is intentionally more conservative: Build 42.20's client success path does not reliably set `isVehicleCollision`, so the animal path requires pre/post-update overlap and infers whether main plus fixed or fixed-only correction was queued from the animal's pre-update `AnimalFalldownState`. The standing-zombie path uses the same pre/post-overlap fallback while retaining the engine flag requirement for prone continuation. These are not claimed as exact repeated-hit detectors and must be tested with real clients and delayed server state.
+The initial live-animal or live-zombie hit uses an exact false-to-true persistent-contact edge. Sustained overlap is intentionally more conservative. The audited engines' client success path does not reliably set `isVehicleCollision`, so the animal path requires pre/post-update overlap and infers whether main plus fixed or fixed-only correction was queued from the animal's pre-update `AnimalFalldownState`. The standing-zombie path uses the same pre/post-overlap fallback while retaining the engine flag requirement for prone continuation. These are not claimed as exact repeated-hit detectors and must be tested with real clients and delayed server state.
 
-Version 1.0.0 applies the live-zombie horizontal correction through public `applyImpulseGeneric` at the locally simulated vehicle's center. It uses the engine-recorded `hitDir` when available and falls back to current vehicle/target position otherwise. Target movement between collision and `OnTick` therefore cannot redirect the normal `hitDir` path, and the zero relative offset remains torque-free. This remains ordinary client-authoritative vehicle physics replicated through normal vehicle packets; it adds no custom network message.
+Both profiles apply the live-zombie horizontal correction through public `applyImpulseGeneric` at the locally simulated vehicle's center. The correction uses the engine-recorded `hitDir` when available and falls back to current vehicle/target position otherwise. Target movement between collision and `OnTick` therefore cannot redirect the normal `hitDir` path, and the zero relative offset remains torque-free. This remains ordinary client-authoritative vehicle physics replicated through normal vehicle packets; it adds no custom network message.
 
 Prone-living-zombie vertical wheel lift and its off-center torque remain vanilla. Their exact pending values are private per-wheel state, and the only public geometry call would also rewrite that state. The Workshop build does not use reflection, patch a class, or repeat the side-effectful prone collision call to scale it.
 
-Applying `ZombieImpulseMultiplier` from the multiplayer sandbox-options UI is live. Build 42.20 broadcasts the updated options to connected clients, and the mod rereads the value every pre-tick. The startup marker is only an initial snapshot; the client prints a separate line when the value changes and another when the first correction for that value is queued.
+Applying `ZombieImpulseMultiplier` from the multiplayer sandbox-options UI is live. The mod rereads the broadcast option value every pre-tick. Live Apply was verified during 42.20.0 development and must be repeated in the 42.21 gameplay pass. The startup marker is only an initial snapshot; the client prints a separate line when the value changes and another when the first correction for that value is queued.
 
 ## What package loading proves
 

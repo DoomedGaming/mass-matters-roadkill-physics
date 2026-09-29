@@ -2,16 +2,23 @@
 
 Use a disposable save cloned from one fixed baseline. Run vanilla and modded passes with the same vehicle condition, tire pressure, fuel, cargo, target, approach line, weather, and commanded speed. Record video or telemetry from immediately before contact until the vehicle settles.
 
-Version 1.0.0 has been tested only on Project Zomboid Build 42.20 stable. Automated checks, dedicated-server loading, and isolated connected driving tests cover the release scenarios exercised during development; this broader matrix remains the regression plan for additional clients, vehicles, latency conditions, and mod combinations.
+Version 1.1.0 preserves the original 42.20 profile and adds a separate 42.21 profile. Original gameplay evidence covers 42.20.0; the 42.21 engine audit and automated tests pass, but the real gameplay gates below remain pending. Run the new profile on 42.21 and repeat a preserved-profile regression on 42.20 where available. Record exact engine and profile versions with every result. See the [compatibility audit](compatibility-42.21.md).
 
 ## Automated preflight
 
 ```bash
-PZ_GAME_JAR=/path/to/projectzomboid.jar ./scripts/verify.sh
+./scripts/verify.sh /path/to/42.20/projectzomboid.jar /path/to/42.21/projectzomboid.jar
 ./scripts/package-release.sh
 ```
 
-Preflight must pass Lua syntax, formula tests, mocked client/server runtime tests, exact 42.20 JAR/API checks, image dimensions, JSON parsing, a no-Java package scan, ZIP integrity, and SHA-256 verification.
+Preflight must pass Lua syntax, formula tests, mocked client/server runtime tests, the frozen legacy-file manifest, profile-metadata and runtime-guard checks, supplied exact JAR/API checks, image dimensions, JSON parsing, a no-Java package scan, ZIP integrity, and SHA-256 verification.
+
+## Version and upgrade checks
+
+- Confirm 42.20 selects the unchanged `42/` profile and 42.21 selects `42.21/` with the same Mod ID and sandbox values.
+- Start a copied existing world with the new package. Confirm no settings or saved progress change merely from the mod update.
+- Confirm the new profile accepts `42.21` and `42.21.0`, and an unrecognized runtime string queues no physics correction.
+- After publication, repeat profile-selection and checksum checks with Steam-downloaded files rather than a local development copy.
 
 ## Single-player matrix
 

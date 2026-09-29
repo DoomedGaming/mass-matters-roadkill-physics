@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 - Unreleased
+
+- Add a separate `42.21/` profile while keeping the released `42/` and `common/` files byte for byte unchanged.
+- Preserve Workshop item `3776615501`, Mod ID `DoomedRoadkillPhysics`, sandbox keys, defaults, and existing-world behavior.
+- Audit the 42.21 vehicle collision formulas, pending impulse handling, Lua APIs, and event timing. Retain the existing physics algorithms.
+- Accept exact 42.21 and 42.21.0 runtime strings in the new profile and skip its physics corrections on unrecognized versions.
+- Verify both profiles with formula and mocked runtime tests; retain original 42.20.0 gameplay evidence separately from the pending 42.21 gameplay pass.
+- Correct the stale first-upload instructions to update the existing public Workshop item without creating another item or changing its visibility.
+
 ## 1.0.0 - 2026-08-02
 
 - Stabilize the Build 42.20 scope: mass-aware live-small-animal reactions, mass-aware corpse wheel lift, and independently tunable live-zombie horizontal slowdown.

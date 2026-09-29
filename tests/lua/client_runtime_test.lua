@@ -1,5 +1,6 @@
 local clientPath = assert(arg[1], "client Lua path is required")
 local sharedDirectory = assert(arg[2], "shared Lua directory is required")
+local runtimeVersion = arg[3] or "42.20"
 package.path = sharedDirectory .. "/?.lua;" .. package.path
 
 local handlers = {}
@@ -51,7 +52,7 @@ function instanceof(value, className)
 end
 
 function getCore()
-    return { getVersionNumber = function() return "42.20" end }
+    return { getVersionNumber = function() return runtimeVersion end }
 end
 
 local function list(values)

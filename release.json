@@ -1,10 +1,38 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "projectZomboid": {
-    "version": "42.20.0",
-    "steamBuildId": "24449119",
-    "jarSha256": "e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8"
+    "profiles": [
+      {
+        "folder": "42",
+        "modVersion": "1.0.0",
+        "runtimeVersions": ["42.20"],
+        "versionMin": "42.20.0",
+        "versionMax": "42.20.0",
+        "auditedBuilds": [
+          {
+            "version": "42.20.0",
+            "steamBuildId": "24449119",
+            "jarSha256": "e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8"
+          }
+        ]
+      },
+      {
+        "folder": "42.21",
+        "modVersion": "1.1.0",
+        "runtimeVersions": ["42.21", "42.21.0"],
+        "versionMin": "42.21.0",
+        "versionMax": "42.21.0",
+        "auditedBuilds": [
+          {
+            "version": "42.21.0",
+            "steamBuildId": "25485521",
+            "jarSha256": "e1a69eb743ede60b213a0fe7f8b83d4fcab773036d256cc4543a336f3b058a33"
+          }
+        ]
+      }
+    ]
   },
   "modId": "DoomedRoadkillPhysics",
+  "workshopId": "3776615501",
   "distribution": "steam-workshop-lua-only"
 }

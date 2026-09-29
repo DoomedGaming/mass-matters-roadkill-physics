@@ -1,11 +1,22 @@
 local corePath = assert(arg[1], "core Lua path is required")
+local expectedVersion = arg[2] or "42.20"
 dofile(corePath)
 
 local Core = assert(DoomedRoadkillPhysics)
 
-assert(Core.isTargetGameVersion("42.20"))
-assert(not Core.isTargetGameVersion("42.20.1"))
-assert(not Core.isTargetGameVersion("142.20"))
+assert(Core.TARGET_GAME_VERSION == expectedVersion)
+assert(Core.isTargetGameVersion(expectedVersion))
+assert(not Core.isTargetGameVersion(expectedVersion .. ".1"))
+assert(not Core.isTargetGameVersion("1" .. expectedVersion))
+assert(not Core.isTargetGameVersion(expectedVersion .. "-unstable"))
+assert(not Core.isTargetGameVersion(nil))
+if expectedVersion == "42.21" then
+    assert(Core.isTargetGameVersion("42.21.0"))
+    assert(not Core.isTargetGameVersion("42.20"))
+    assert(not Core.isTargetGameVersion("42.22"))
+else
+    assert(not Core.isTargetGameVersion(expectedVersion .. ".0"))
+end
 
 local function assertNear(expected, actual, tolerance)
     tolerance = tolerance or 0.0001
