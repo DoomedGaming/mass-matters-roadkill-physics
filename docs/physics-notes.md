@@ -1,6 +1,6 @@
 # Build 42.20 physics notes
 
-These notes describe the exact Steam 42.20 stable JAR recorded in `release.json` and the Lua-only correction used by version 1.0.0.
+These historical notes describe Steam Build 42.20.0, build ID `24449119`, JAR SHA-256 `e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8`, and the Lua-only correction released in version 1.0.0. That `42/` implementation remains unchanged in version 1.1.0. See the [42.21 compatibility audit](compatibility-42.21.md) for the new profile and its validation status.
 
 ## Live animals
 

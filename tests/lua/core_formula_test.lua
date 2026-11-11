@@ -1,11 +1,39 @@
 local corePath = assert(arg[1], "core Lua path is required")
+local expectedVersion = arg[2] or "42.20"
 dofile(corePath)
 
 local Core = assert(DoomedRoadkillPhysics)
 
-assert(Core.isTargetGameVersion("42.20"))
-assert(not Core.isTargetGameVersion("42.20.1"))
-assert(not Core.isTargetGameVersion("142.20"))
+assert(Core.TARGET_GAME_VERSION == expectedVersion)
+assert(Core.isTargetGameVersion(expectedVersion))
+if expectedVersion ~= "42.22" then
+    assert(not Core.isTargetGameVersion(expectedVersion .. ".1"))
+end
+assert(not Core.isTargetGameVersion("1" .. expectedVersion))
+assert(not Core.isTargetGameVersion(expectedVersion .. "-unstable"))
+assert(not Core.isTargetGameVersion(nil))
+if expectedVersion == "42.21" then
+    assert(Core.isTargetGameVersion("42.21.0"))
+    assert(not Core.isTargetGameVersion("42.20"))
+    assert(not Core.isTargetGameVersion("42.22"))
+elseif expectedVersion == "42.22" then
+    for _, version in ipairs({
+        "42.22.0", "42.22.1", "42.22.2", "42.22.3", "42.22.20",
+        "42.22.999999", "42.22.0002", "42.22.12345678901234567890",
+    }) do
+        assert(Core.isTargetGameVersion(version), "numeric patch rejected: " .. version)
+    end
+    for _, version in ipairs({
+        "42.20", "42.21", "42.21.0", "42.23", "43.0", "43.22",
+        "142.22", "142.22.2", "42.220", "42.220.2", "42.22.",
+        "42.22.2.0", "42.22.-1", "42.22.+1", "42.22.1e2",
+        "42.22.2-unstable", " 42.22", "42.22 ", " 42.22.2", "42.22.2 ",
+    }) do
+        assert(not Core.isTargetGameVersion(version), "unexpected support for " .. version)
+    end
+else
+    assert(not Core.isTargetGameVersion(expectedVersion .. ".0"))
+end
 
 local function assertNear(expected, actual, tolerance)
     tolerance = tolerance or 0.0001

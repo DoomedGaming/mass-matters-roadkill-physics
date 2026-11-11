@@ -1,17 +1,17 @@
 # Workshop staging
 
-`workshop/` is the complete Lua-only source template. Run `scripts/package-release.sh`, then upload `dist/workshop-staging/` with the normal Project Zomboid Workshop uploader.
+`workshop/` is the complete Lua-only source template. Run `scripts/package-release.sh` to create `dist/workshop-staging/` for the normal Project Zomboid Workshop uploader.
 
-The descriptor is prepared for the 1.0.0 release and clearly marks the mod as tested only on Project Zomboid Build 42.20 stable. Leave `id=` empty until Steam creates the item. Record the assigned immutable numeric ID in both `workshop/workshop.txt` and the release records before any update. Do not create a replacement item after Steam assigns the ID.
+Version 1.2.0 is prepared as an update to the existing public [item 3776615501](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501). Keep `id=3776615501` and `visibility=public`. Do not create a second item or reuse the obsolete first-upload private workflow.
 
-Keep `visibility=private` for the initial upload and test the copy downloaded through Steam, not a local development copy. Change visibility only after the single-player, listen-server, and dedicated connected-client gates pass. The complete upload checklist is in [`docs/steam-workshop-release.md`](../docs/steam-workshop-release.md).
+The package preserves `42/`, `42.21/`, and `common/` unchanged and adds `42.22/` for 42.22 and every numeric 42.22.x patch. Normal 42.22 patch updates load without a mod update while major 42 and minor 22 remain locked. The 42.22.2 engine audit and automated checks pass. Packaging prepares version 1.2.0 for upload but does not publish it. Follow the [update checklist](../docs/steam-workshop-release.md) when uploading the release.
 
-Server configuration uses the two different identifiers:
+Server configuration uses two different identifiers:
 
 ```ini
-WorkshopItems=<numeric Steam Workshop ID>
+WorkshopItems=3776615501
 Mods=DoomedRoadkillPhysics
 DoLuaChecksum=true
 ```
 
-The staged tree intentionally contains no JAR, class file, patcher, launcher, or manual installer.
+The staging tree contains no JAR, class file, patcher, launcher, or manual installer. Copy the complete versioned tree so older players keep their existing profile.

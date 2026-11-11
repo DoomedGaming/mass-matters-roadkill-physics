@@ -3,124 +3,90 @@
 [![Verify](https://github.com/DoomedGaming/mass-matters-roadkill-physics/actions/workflows/verify.yml/badge.svg)](https://github.com/DoomedGaming/mass-matters-roadkill-physics/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE.md)
 
-Mass Matters is a vehicle-physics balance mod for Project Zomboid. Its purpose is simple: the vehicle reaction should make sense for the mass of what was hit.
+Mass Matters makes vehicle reactions to live animals and corpses depend on body mass. It also provides independent tuning for the horizontal slowdown caused by live-zombie impacts.
 
-It addresses three disproportionate Build 42.20 reactions:
+A mouse or rat should not stop a road vehicle, and a single corpse should not launch a truck. The mod corrects those oversized reactions without replacing target damage, death handling, sounds, vehicle-part damage, traction, or unrelated collisions.
 
-- a live mouse or rat can stop a road vehicle because the vanilla animal impulse scales with vehicle mass;
-- a zombie or animal corpse can pitch or launch a vehicle because the vanilla wheel lift also scales with vehicle mass;
-- the forward slowdown from hitting a live zombie can be tuned independently without changing its damage or prone wheel lift.
+## Compatibility and validation
 
-It works with multiplayer's normal Workshop distribution and can be added to an existing world without save migration.
+**Version 1.2.0** adds a separate Build 42.22.x profile while preserving the existing `42/`, `42.21/`, and `common/` files byte for byte. The 42.22.2 engine audit and automated checks pass.
 
-## Compatibility warning
+| Game version | Package behavior | Validation |
+| --- | --- | --- |
+| 42.20.x | Loads the unchanged `42/` profile from release 1.0.0 | Original gameplay testing was on 42.20.0; each later 42.20 patch has not been independently certified |
+| 42.21 or 42.21.0 | Loads the unchanged `42.21/` profile | Prior engine/API audit and automated tests pass |
+| 42.22 and 42.22.x | Loads the new `42.22/` profile for any numeric patch | Engine/API audit covers 42.22.2; automated checks cover the version policy |
+| Other versions | No compatibility claim | The new profile skips physics on an unrecognized runtime version |
 
-**Version 1.0.0 has been tested only on Project Zomboid Build 42.20 stable.** It is not advertised as compatible with Build 41, later Build 42 releases, or unstable branches. The implementation depends on exact 42.20 collision timing and public vehicle APIs, so it should be re-audited before use on another game build even if the Lua files still load.
+The new profile accepts `42.22` and `42.22.<digits>`, including future numeric patches such as `42.22.3` or `42.22.20`, without a mod update. It keeps major and minor versions locked: `42.23.x`, `43.x`, and malformed version strings are rejected. The exact JAR check records the engine examined by the developer verifier; it does not block installation on another 42.22 patch. The preserved 42.21 profile still accepts `42.21` and `42.21.0`. Build 41 and builds earlier than 42.20 remain outside this package's support range.
 
-Version 1.0.0 has passed Lua formula/runtime tests, exact 42.20 API and JAR verification, package-integrity checks, dedicated-server loading and checksum generation, and local connected multiplayer driving tests. This does not guarantee compatibility with every custom vehicle or modpack; the broader regression matrix remains available in [the gameplay test plan](docs/test-matrix.md).
-
-The exact audited local build is Steam build ID `24449119`, with this game JAR:
-
-```text
-e4661ca9cb168abc995d3cf59994fa17f66ba8a4e2c2899cbfa48f7eacea54b8  projectzomboid.jar
-```
+The Mod ID, Workshop item, sandbox option names, and defaults stay the same. Existing worlds need no save migration. See the [42.22.2 compatibility audit](docs/compatibility-42.22.2.md) for evidence and testing limits. The [42.21 audit](docs/compatibility-42.21.md) records the earlier profile.
 
 ## Features
 
-- Mass-aware live-animal reactions so mice, rats, rabbits, and other small animals do not behave like concrete barriers.
-- Mass-aware corpse wheel reactions intended to stop a single body from launching a car or semi.
-- A separate `ZombieImpulseMultiplier` for live-zombie horizontal slowdown, from vanilla (`1.0`) to removed (`0.0`).
+- Mass-aware live-animal reactions, from mice and rats to larger animals.
+- Mass-aware zombie and animal corpse wheel reactions.
+- A separate `ZombieImpulseMultiplier` for live-zombie horizontal slowdown, from vanilla at `1.0` to removed at `0.0`.
 - Per-world sandbox controls that multiplayer administrators can apply live.
-- Multiplayer authority safety: only the client locally simulating a vehicle queues its correction.
-- Vanilla target damage, death, hit sounds, wheel/part damage, traction, drivetrain, and unrelated collisions remain untouched.
+- Corrections only on the client locally simulating the vehicle.
+- Normal Steam Workshop installation and multiplayer distribution.
 
 ## Known limitation
 
-`ZombieImpulseMultiplier` controls the horizontal pedestrian slowdown from a live zombie. It does **not** remove the separate vertical wheel lift and pitch/roll torque produced after a living zombie falls prone beneath the wheels. Build 42.20 does not expose those final per-wheel forces to mods. An approximate counterforce could make crowded contacts less stable, so version 1.0.0 deliberately leaves that path vanilla.
+`ZombieImpulseMultiplier` changes the horizontal pedestrian slowdown. It does **not** remove the separate vertical wheel lift and pitch/roll torque produced when a living zombie falls prone beneath the wheels. The audited engines keep those final per-wheel values private. Repeating the public prone collision test would rewrite the pending forces, so the mod leaves that path vanilla.
+
+Custom vehicles and modpacks still need gameplay testing. Mods that independently rewrite animal impulses, live-zombie pedestrian impulses, corpse size, or the same pending corpse-wheel forces may conflict.
 
 ## How it works
 
-Build 42.20 exposes the necessary vehicle methods to Lua even though it does not expose a replaceable collision callback.
+The client snapshots contact state in `OnTickEvenPaused` and applies corrections in `OnTick`. A false-to-true persistent-contact transition identifies an initial hit in that update. After the engine's contact window expires, the same animal can produce a new edge on a later impact.
 
-The client uses a two-phase `OnTickEvenPaused` to `OnTick` contact detector. A false-to-true engine persistent-contact transition identifies the exact initial vehicle/animal hit without re-testing an animal after the impact has moved it. Once the engine's short persistent-contact window expires, a later impact with the same animal can form a new exact edge.
+For sustained multiplayer animal overlap, the engine's client hit path does not reliably set `isVehicleCollision`. The mod requires overlap before and after the update and uses the animal's pre-update `AnimalFalldownState` to infer whether to correct the main impulse plus the fixed impulse, or only the fixed impulse. This is a conservative repeated-hit inference, not an exact collision callback.
 
-Sustained multiplayer overlap needs a separate conservative path. Build 42.20's successful client animal-hit path does not reliably set `isVehicleCollision`, and `hitAnimal` can queue both the vehicle-mass-derived main impulse and the fixed `+1` again until `AnimalFalldownState` or authoritative server state arrives. The mod therefore requires overlap both before and after the world update and uses the animal's pre-update state as an inference: it corrects main plus fixed when that state was not `AnimalFalldownState`, and fixed only when it was. This repeated-contact inference is deliberately not presented as an exact hit signal. The retained animal reaction uses animal mass and is never greater than the corresponding inferred vanilla reaction.
+Live-zombie corrections use public `applyImpulseGeneric` at the vehicle center. The engine-recorded `hitDir` supplies the direction where available, with a positional fallback. The centered correction adds no torque.
 
-For a live zombie, the same contact timing scales only the horizontal pedestrian impulse responsible for forward slowdown. `ZombieImpulseMultiplier` keeps vanilla slowdown at `1.0`, approximately half at `0.5`, or none of that forward impulse at `0.0`. The correction uses the public `applyImpulseGeneric` API at the vehicle center, using the engine-recorded `hitDir` when available and a positional fallback otherwise. The normal `hitDir` path is no longer redirected by a zombie that moved after impact, and the centered correction remains torque-free. The conservative multiplayer fallback for a standing zombie still requires the same vehicle/zombie pair to remain both persistently contacted and geometrically overlapped before and after the update.
+For corpses, the mod repeats the nearby-body scan in vanilla order. It temporarily substitutes a mass-aware `corpseSize`, calls `testCollisionWithCorpse(body, false)` to replace the pending per-wheel impulse without another sound, and immediately restores the body's original mod data.
 
-The separate vertical wheel-lift and off-center torque produced when a wheel runs over a prone living zombie remain vanilla. Build 42.20 keeps the exact pending values in private per-wheel state that mods cannot safely read or scale; calling the public prone collision test again would itself rewrite that state.
-
-For a corpse, the mod repeats vanilla's nearby-body scan in the same order after the vanilla scan. It temporarily substitutes a mass-aware `corpseSize` and calls `testCollisionWithCorpse(body, false)`. Build 42.20 keeps one pending corpse impulse per wheel, so this replaces the oversized value before the next physics step; `false` prevents a duplicate sound. The body's original mod data is restored immediately.
-
-Only a vehicle for which `isLocalPhysicSim()` is true is corrected. In multiplayer, that is the client currently responsible for the vehicle, and ordinary vehicle synchronization carries the corrected result to the server and other players.
-
-See [the physics notes](docs/physics-notes.md) for the audited formulas and timing.
-
-## Scope
-
-The mod changes only the vehicle reaction to:
-
-- a live `IsoAnimal` during a current vehicle contact, including a later contact after separation;
-- the forward slowdown from hitting a live `IsoZombie`;
-- an `IsoDeadBody` contacting a wheel.
-
-It does not intentionally change target damage or death, vehicle-part or wheel damage, hit sounds, prone-living-character vertical wheel lift or its torque, traction, drivetrain, wall or tree impacts, or vehicle-to-vehicle collisions.
-
-The normal corpse wheel-lift path is covered. A separate legacy-looking high-speed corpse callback was found in the game code, but normal bodies are scanned through `staticMovingObjects`; this release does not claim to alter an unproven path.
+Only a vehicle with `isLocalPhysicSim()` is corrected. Normal vehicle synchronization carries its motion to the server and other players. See the [original physics audit](docs/physics-notes.md), [42.21 audit](docs/compatibility-42.21.md), and [42.22.2 audit](docs/compatibility-42.22.2.md).
 
 ## Installation
 
-### Steam Workshop
+Subscribe to [Mass Matters: Roadkill Physics on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501), enable it for the world, and restart normally when adding or updating the mod. The public Workshop item remains at its last published version until version 1.2.0 is uploaded.
 
-Subscribe to **Mass Matters: Roadkill Physics**, enable it for the world, and restart the game normally when adding or updating the mod. The Workshop link and numeric item ID will be added here after the first Steam publication.
+For a manual test, copy `workshop/Contents/mods/DoomedRoadkillPhysics` from the release archive into your user `Zomboid/mods/` directory. Copy the complete mod folder, including all three version directories and `common/`. Use a disposable save and avoid loading both the development and subscribed copies.
 
-### Manual local install
-
-Use a disposable save and back it up first.
-
-1. Download the matching release ZIP or run `./scripts/package-release.sh` from source.
-2. Copy `workshop/Contents/mods/DoomedRoadkillPhysics` from the archive into your user `Zomboid/mods/` directory.
-3. Enable **Mass Matters: Roadkill Physics** for the test save.
-
-There is no executable installer and nothing is copied into the Project Zomboid game directory.
-
-## Multiplayer server install
-
-After Steam assigns the item its numeric Workshop ID, configure the server normally:
+For a multiplayer server, append these identifiers to the existing lists:
 
 ```ini
-WorkshopItems=<numeric Workshop ID>
+WorkshopItems=3776615501
 Mods=DoomedRoadkillPhysics
 DoLuaChecksum=true
 ```
 
-Append these values to existing semicolon-separated lists rather than replacing unrelated mods. `WorkshopItems=` receives the numeric Steam ID; `Mods=` receives the internal Mod ID shown above. Every connecting client must load the mod through the server's normal Workshop flow. See [multiplayer deployment](docs/multiplayer.md) for the authority model and release gates.
+Preserve unrelated entries and their order. All connecting clients use the server's normal Workshop flow. See [multiplayer deployment](docs/multiplayer.md).
 
 ## Tuning
 
-Three sandbox options are available:
+| Sandbox option | Range | Default |
+| --- | --- | --- |
+| Live animal vehicle reaction | 0.0 to 2.0 | 1.0 |
+| Live zombie forward slowdown | 0.0 to 1.0 | 1.0 |
+| Corpse vehicle reaction | 0.0 to 2.0 | 1.0 |
 
-- **Live animal vehicle reaction**: default `1.0`.
-- **Live zombie forward slowdown**: default `1.0`.
-- **Corpse vehicle reaction**: default `1.0`.
+Animal and corpse corrections are capped so they cannot increase the targeted reaction above vanilla. For those options, `0.0` removes nearly all of the targeted reaction and `1.0` gives the intended mass-aware result. Zombie slowdown retains vanilla at `1.0`, about half at `0.5`, and none of the targeted horizontal impulse at `0.0`.
 
-The animal and corpse options accept `0.0` through `2.0`, but their corrections are capped so they cannot make either reaction stronger than vanilla. For those two options, `0.0` removes nearly all of the targeted vehicle reaction and `1.0` is the intended mass-aware behavior.
-
-The zombie option accepts `0.0` through `1.0`: `1.0` preserves vanilla horizontal slowdown, `0.5` retains half, and `0.0` removes it. A multiplayer administrator's Apply takes effect on connected clients immediately; no reconnect or restart is needed for a value change. The client logs the changed value and the first queued zombie correction. Existing servers whose sandbox data does not contain `ZombieImpulseMultiplier` automatically use `1.0`, so installing the option does not silently change live-zombie slowdown until an administrator tunes it.
+A multiplayer administrator's Apply takes effect on connected clients. The client logs a changed zombie value and the first queued correction. Existing sandbox data missing `ZombieImpulseMultiplier` uses `1.0`.
 
 ## Build and verify
 
-Requirements are Bash, Node.js, Lua/`luac`, a JDK providing `javap` for exact-API verification, ImageMagick, `zip`, and `unzip`.
+Requirements are Bash, Node.js, Lua/`luac`, ImageMagick, `zip`, and `unzip`. Exact-engine checks additionally need a JDK 25 or newer with `javap` and `javac`, plus the installed game's bundled Java runtime and `stdlib.lua`.
 
 ```bash
-PZ_GAME_JAR=/path/to/projectzomboid.jar ./scripts/verify.sh
+./scripts/verify.sh
 ./scripts/package-release.sh
+sha256sum -c dist/SHA256SUMS.txt
 ```
 
-Packaging writes a Lua-only ZIP, Workshop upload staging tree, and checked SHA-256 file to `dist/`. The verifier rejects any `.jar` or `.class` file in the Workshop tree.
+Use the exact-JAR commands in the [release checklist](docs/steam-workshop-release.md) for an engine audit. Packaging writes a Lua-only ZIP and Workshop staging tree to `dist/`. Neither is an upload. The verifier rejects Java binaries in the Workshop tree.
 
-## Compatibility
-
-This implementation is exact-build code: its event timing and pending-impulse behavior were audited against 42.20. It should be re-audited for later game builds even if the Lua files still load.
-
-Mods that independently rewrite animal vehicle impulses, live-zombie pedestrian impulses, corpse size, or the same per-wheel pending corpse slots may conflict. Content, map, and vehicle-definition mods should not inherently conflict, but custom vehicles and custom animal weights belong in gameplay testing.
+Automated checks do not prove real collision timing or multiplayer convergence. Follow the [gameplay test matrix](docs/test-matrix.md) before changing the release's testing claim.

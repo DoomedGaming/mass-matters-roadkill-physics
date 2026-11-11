@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "8b2830b6691c2f1c281d634912144866e039fa7a",
+  "paths": {
+    "42/media/AnimSets/DoomedRoadkillPhysics_42.keep": "b20addb5e2be59bc799f637fee2f5e049e4f31e0795478edc60197c1f7d3366e",
+    "42/media/actiongroups/DoomedRoadkillPhysics_42.keep": "3279dd8ecb1eed1803e97d37789f425f4003d424b2c1394ce3ce3896d3899b6f",
+    "42/media/lua/client/DoomedRoadkillPhysics_Client.lua": "a0bd52afd621d01a9bc099a7e09035f9400fc673ae7e656efea91417e0ed3990",
+    "42/media/lua/server/DoomedRoadkillPhysics_Server.lua": "a813cfa782ed1d066707afd64f42d05e1836a0d8d2bf829bdbe48f5b92f2f4eb",
+    "42/media/lua/shared/DoomedRoadkillPhysics_Core.lua": "f7d7661b61a7187a6125270f3894b04e494bfe0b8dce2f4d53987905d918f1a1",
+    "42/media/lua/shared/Translate/EN/Sandbox.json": "ecef9075b4c2ebc18af91a83d1464d20bd6e3ea8fe75db25135324709a88d778",
+    "42/media/sandbox-options.txt": "92d126bf02c3caf83fea6966493570bc4cb740e9cebb75842cb793d4972c8eba",
+    "42/mod.info": "6e0cf527c66e31abf14743e5ea6a48b642bd1bb7e6fc4af73658133c69e55de5",
+    "42/poster.png": "7853d0a6222dfa1fee47b61d0c11503ea14bfc747b47d89ad0a887ed6caaabe5",
+    "common/media/AnimSets/DoomedRoadkillPhysics_common.keep": "b20addb5e2be59bc799f637fee2f5e049e4f31e0795478edc60197c1f7d3366e",
+    "common/media/actiongroups/DoomedRoadkillPhysics_common.keep": "3279dd8ecb1eed1803e97d37789f425f4003d424b2c1394ce3ce3896d3899b6f"
+  }
+}

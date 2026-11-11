@@ -2,16 +2,23 @@
 
 Use a disposable save cloned from one fixed baseline. Run vanilla and modded passes with the same vehicle condition, tire pressure, fuel, cargo, target, approach line, weather, and commanded speed. Record video or telemetry from immediately before contact until the vehicle settles.
 
-Version 1.0.0 has been tested only on Project Zomboid Build 42.20 stable. Automated checks, dedicated-server loading, and isolated connected driving tests cover the release scenarios exercised during development; this broader matrix remains the regression plan for additional clients, vehicles, latency conditions, and mod combinations.
+Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22 and every numeric 42.22.x patch. Run the new profile on the 42.22 patch being evaluated and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
 
 ## Automated preflight
 
 ```bash
-PZ_GAME_JAR=/path/to/projectzomboid.jar ./scripts/verify.sh
+./scripts/verify.sh /path/to/42.20/projectzomboid.jar /path/to/42.21/projectzomboid.jar /path/to/42.22.2/projectzomboid.jar
 ./scripts/package-release.sh
 ```
 
-Preflight must pass Lua syntax, formula tests, mocked client/server runtime tests, exact 42.20 JAR/API checks, image dimensions, JSON parsing, a no-Java package scan, ZIP integrity, and SHA-256 verification.
+Preflight must pass Lua syntax, formula tests, mocked client/server runtime tests, the frozen legacy-file manifest, profile-metadata and runtime-guard checks, supplied exact JAR/API checks, image dimensions, JSON parsing, a no-Java package scan, ZIP integrity, and SHA-256 verification.
+
+## Version and upgrade checks
+
+- Confirm 42.20 selects the unchanged `42/` profile, 42.21 selects the unchanged `42.21/` profile, and 42.22.x selects `42.22/`, all with the same Mod ID and sandbox values.
+- Start a copied existing world with the new package. Confirm no settings or saved progress change merely from the mod update.
+- Confirm the new profile accepts `42.22` and any numeric patch such as `42.22.0`, `42.22.1`, `42.22.2`, `42.22.3`, `42.22.20`, or `42.22.999999`. Other major/minor versions such as `42.23.0` and `43.0.0`, and malformed strings, must register no client physics hooks and queue no correction. Record the audited JAR identity separately from this loading policy. The preserved 42.21 profile still accepts `42.21` and `42.21.0`.
+- After publication, repeat profile-selection and checksum checks with Steam-downloaded files rather than a local development copy.
 
 ## Single-player matrix
 
@@ -37,7 +44,7 @@ For live animals, include a sustained overlap both before and after the transiti
 - duplicate hit events or repeated correction;
 - console errors, the `DoomedRoadkillPhysics` startup line, the live multiplier-change line, and the first-correction detector line.
 
-## Provisional acceptance gates
+## Provisional gameplay criteria
 
 - A mouse or rat cannot dead-stop a roadworthy moving vehicle.
 - One human/zombie corpse cannot launch or roll any tested roadworthy vehicle.

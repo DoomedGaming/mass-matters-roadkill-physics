@@ -1,89 +1,70 @@
-# Steam Workshop release checklist
+# Steam Workshop update checklist
 
-This checklist prepares **Mass Matters: Roadkill Physics 1.0.0** for its first Steam Workshop publication. It does not authorize an upload by itself.
+Prepare **Mass Matters: Roadkill Physics 1.2.0** as an update to the existing public item. This checklist does not authorize an upload.
 
 ## Release identity
 
-- Workshop title: **Mass Matters: Roadkill Physics [B42.20]**
-- Release: **1.0.0**
-- Project Zomboid Mod ID: `DoomedRoadkillPhysics`
-- Compatibility claim: **tested only on Project Zomboid Build 42.20 stable**
-- Initial Steam Workshop ID: leave `id=` empty until Steam creates the item
-- Initial visibility: `private`
+- Existing item: [3776615501](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501)
+- Mod ID: `DoomedRoadkillPhysics`
+- Release title: **Mass Matters: Roadkill Physics [B42.20 / B42.21 / B42.22]**
+- Visibility: preserve `public`
+- Package version: `1.2.0`; the unchanged `42/` and `42.21/` profiles retain `1.0.0` and `1.1.0` respectively
 
-The Workshop item ID is permanent. Once Steam assigns it, record the same numeric ID in `workshop/workshop.txt` before packaging or uploading another update. Never make a second item merely to update the first one.
+The source descriptor once contained an empty ID and `private` visibility from first-publication staging. Those values are obsolete. The existing public item's ID, application, creator, and visibility were checked during the earlier 1.1.0 preparation. That historical check does not establish the item's current state. Re-query it immediately before upload.
 
-## 1. Build and inspect the upload tree
+## 1. Verify and package
 
 From the repository root:
 
 ```bash
-PZ_GAME_JAR=/path/to/build-42.20/projectzomboid.jar ./scripts/verify.sh
+./scripts/verify.sh /path/to/42.20/projectzomboid.jar /path/to/42.21/projectzomboid.jar /path/to/42.22.2/projectzomboid.jar
 ./scripts/package-release.sh
 sha256sum -c dist/SHA256SUMS.txt
 ```
 
+`PZ_GAME_JAR=/path/to/projectzomboid.jar ./scripts/verify.sh` remains available for a single engine audit. Without JAR paths, the verifier explicitly skips engine checks; do not record that run as engine validation.
+
 Before opening the uploader, confirm:
 
-- `release.json`, `CHANGELOG.md`, `README.md`, and `42/mod.info` all identify version 1.0.0;
-- `dist/workshop-staging/workshop.txt` contains the approved public description, an empty `id=`, and `visibility=private`;
-- `dist/workshop-staging/preview.png` is the intended public preview;
-- the staging tree contains only normal Workshop metadata and the Lua mod—no JAR, class file, patcher, launcher, server configuration, save data, credentials, or test-server files;
+- the `42/` and `common/` files match the frozen release 1.0.0 manifest, and `42.21/` matches its preserved-profile manifest;
+- `42.22/mod.info`, release metadata, and current release notes identify the new 42.22.x profile and its fixed major/minor bounds;
+- `dist/workshop-staging/workshop.txt` has `id=3776615501` and `visibility=public`;
+- title, preview, description, tags, and compatibility statements describe the completed validation accurately;
+- the staging tree contains ordinary metadata and Lua content, with no Java binary, game file, server configuration, save, credential, or test-server data;
 - the ZIP and Workshop staging tree came from the same packaging run.
 
-## 2. Create the private item
+## 2. Review validation evidence
 
-Copy `dist/workshop-staging/` into its own new folder under the Project Zomboid Workshop staging directory (`Zomboid/Workshop/`). Do not merge it into an existing Workshop item.
+Confirm the package matches the engine, automated-runtime, and integrity results in the [42.22.2 compatibility audit](compatibility-42.22.2.md). Keep the Workshop description and release notes consistent with the recorded evidence.
 
-In Project Zomboid:
+The [gameplay matrix](test-matrix.md) provides a reference for collision and multiplayer validation on isolated saves and test servers.
 
-1. Open **Workshop**, then **Create and update items**.
-2. Select the Mass Matters staging entry.
-3. Review the title, preview, description, tags, and `private` visibility.
-4. Accept the Steam Workshop legal agreement if Steam requires it.
-5. Upload once and wait for a successful result.
-6. Open the resulting Steam page and capture its numeric Workshop ID.
+## 3. Upload to the existing item
 
-Immediately copy that ID into the source `workshop/workshop.txt` as `id=<numeric ID>`, then rebuild before any future upload. Keep the item private during validation.
+After upload authorization:
 
-## 3. Validate the Steam-downloaded copy
+1. Re-query item `3776615501`, confirm it is this mod for Project Zomboid and that visibility is still public.
+2. Copy the complete verified staging tree to the game's Workshop staging directory. Ensure its descriptor still has `id=3776615501`.
+3. Open **Workshop**, then **Create and update items**, and select this existing item's staging entry.
+4. Review ID, title, preview, description, tags, release notes, and public visibility.
+5. Update the existing item once and wait for Steam to report completion. Do not create a second item or switch the existing item to private.
 
-Remove or move aside the local development copy so it cannot shadow the subscribed Workshop copy. Subscribe to the private item, allow Steam to finish downloading it, and verify the installed content is the packaged 1.0.0 build.
+## 4. Verify the distributed update
 
-Run these gates on Build 42.20 stable:
+Allow Steam to finish downloading the update. Keep local development copies from shadowing the subscribed copy. Verify downloaded files and hashes against the packaged `42/`, `42.21/`, `42.22/`, and `common/` trees.
 
-- single-player with a regular car and a heavy vehicle;
-- live mouse or rat and live rabbit contacts;
-- zombie and animal corpses under multiple wheels;
-- standing live zombies at slowdown values `1.0`, `0.5`, and `0.0`;
-- a prone living zombie, confirming its separate vanilla wheel lift and torque are still present as documented;
-- a mid-session sandbox-option Apply;
-- listen-server host and connected client;
-- dedicated server with at least one connected driving client and `DoLuaChecksum=true`;
-- clean client and server logs with the 1.0.0 load marker and no mod Lua errors.
+Confirm 42.20 and 42.21 select their preserved profiles and 42.22.x selects the new profile. Keep `DoLuaChecksum=true`. Use the [gameplay matrix](test-matrix.md) when evaluating collisions through the Steam-distributed multiplayer package. Check client/server logs and verify the existing public page renders the intended description, preview, version, and compatibility statement.
 
-Do not describe a successful server startup as collision proof. The vehicle tests must be performed by a connected client that owns the local vehicle physics simulation.
+Record the Workshop update result and downloaded-file evidence. Do not claim publication solely from an uploader success message.
 
-## 4. Server installation text
+## Server configuration
 
-After Steam assigns the ID, server operators append the two different identifiers to their existing lists:
+Existing users retain their entries. New users append these identifiers to the current lists:
 
 ```ini
-WorkshopItems=<numeric Steam Workshop ID>
+WorkshopItems=3776615501
 Mods=DoomedRoadkillPhysics
 DoLuaChecksum=true
 ```
 
-`WorkshopItems=` receives the numeric Steam item ID. `Mods=` receives `DoomedRoadkillPhysics`; do not place the Workshop ID in `Mods=`. Existing saves need no migration, but a server must go through its normal restart when first loading the new mod. Do not replace unrelated entries in either semicolon-separated list.
-
-## 5. Make it public
-
-Only after all gates pass:
-
-1. Verify the Steam page still points to the recorded immutable item ID.
-2. Re-read the page description, especially the Build 42.20-only testing statement and prone living-zombie limitation.
-3. Change the existing item's visibility from `private` to `public`.
-4. Confirm the public page renders the preview, description sections, tags, and release version correctly.
-5. Record the final Workshop URL and ID in the GitHub release notes and project documentation.
-
-Later game builds require a fresh collision/API audit and gameplay test pass before changing the compatibility claim.
+Preserve unrelated entries and ordering. A normal server restart loads the updated mod; preparation does not authorize restarting a live server. Existing worlds require no migration.
