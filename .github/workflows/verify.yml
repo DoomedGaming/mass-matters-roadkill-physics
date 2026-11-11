@@ -16,6 +16,15 @@ jobs:
         with:
           node-version: "22"
       - name: Install Lua and image tools
-        run: sudo apt-get update && sudo apt-get install -y lua5.4 imagemagick zip unzip
+        timeout-minutes: 5
+        run: |
+          # Bypass the Azure mirror's observed DNS failures on hosted runners.
+          if [[ -f /etc/apt/apt-mirrors.txt ]]; then
+            printf 'https://archive.ubuntu.com/ubuntu/\tpriority:1\nhttps://security.ubuntu.com/ubuntu/\tpriority:2\n' \
+              | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
+          apt_options=(-o Acquire::Retries=1 -o Acquire::http::Timeout=15 -o Acquire::https::Timeout=15)
+          sudo apt-get "${apt_options[@]}" -o APT::Update::Error-Mode=any update
+          sudo apt-get "${apt_options[@]}" install -y lua5.4 imagemagick zip unzip
       - name: Verify source and build release package
         run: ./scripts/package-release.sh
