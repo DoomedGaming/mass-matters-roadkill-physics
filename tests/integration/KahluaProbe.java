@@ -21,9 +21,11 @@ public final class KahluaProbe {
         if (!Boolean.TRUE.equals(result[0])) throw new AssertionError(java.util.Arrays.toString(result));
     }
     public static void main(String[] args) throws Exception {
+        if (args.length != 4) throw new IllegalArgumentException("Expected profile, simulated version, enabled flag, and shipped version");
         zombie.ZomboidFileSystem.instance.setCacheDir(System.getProperty("user.home") + "/cache");
-        if (!"42.21".equals(zombie.core.Core.getInstance().getVersionNumber())) {
-            throw new AssertionError("This integration matrix targets the 42.21 engine");
+        String shippedVersion = zombie.core.Core.getInstance().getVersionNumber();
+        if (!args[3].equals(shippedVersion)) {
+            throw new AssertionError("Expected engine " + args[3] + ", got " + shippedVersion);
         }
         platform = J2SEPlatform.getInstance();
         env = platform.newEnvironment();
@@ -54,7 +56,7 @@ public final class KahluaProbe {
         HashMap<String, Event> byName = new HashMap<>();
         LuaEventManager.getEvents(events, byName);
         int callbacks = events.stream().mapToInt(e -> e.callbacks.size()).sum();
-        System.out.println("KAHLUA version=" + args[1] + " callbacks=" + callbacks + " vectors=" + vectors);
+        System.out.println("KAHLUA shipped=" + shippedVersion + " profile=" + profile.getFileName() + " simulated=" + args[1] + " callbacks=" + callbacks + " vectors=" + vectors);
         boolean supported = Boolean.parseBoolean(args[2]);
         if (callbacks != (supported ? 4 : 0) || vectors != (supported ? 2 : 0)) throw new AssertionError("Incorrect client startup gate");
         if (supported) {

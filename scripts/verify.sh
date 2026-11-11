@@ -20,6 +20,9 @@ while IFS=$'\t' read -r folder target runtime; do
   lua "$repo_root/tests/lua/core_formula_test.lua" "$core" "$target"
   lua "$repo_root/tests/lua/client_runtime_test.lua" "$client" "$shared" "$runtime"
   lua "$repo_root/tests/lua/server_runtime_test.lua" "$server" "$shared" "$runtime"
+  if [[ "$folder" != 42 && "$runtime" == "$target" ]]; then
+    lua "$repo_root/tests/lua/unsupported_runtime_test.lua" "$client" "$server" "$shared" "$target"
+  fi
   [[ "$(identify -format '%wx%h' "$mod_root/$folder/poster.png")" == "256x256" ]]
   echo "Lua regression tests passed for $folder on runtime $runtime."
 done < <(node - "$repo_root/release.json" <<'NODE'
@@ -31,10 +34,6 @@ for (const profile of release.projectZomboid.profiles) {
 NODE
 )
 
-lua "$repo_root/tests/lua/unsupported_runtime_test.lua" \
-  "$mod_root/42.21/media/lua/client/DoomedRoadkillPhysics_Client.lua" \
-  "$mod_root/42.21/media/lua/server/DoomedRoadkillPhysics_Server.lua" \
-  "$mod_root/42.21/media/lua/shared"
 [[ "$(identify -format '%wx%h' "$repo_root/workshop/preview.png")" == "256x256" ]]
 
 # Keep the original environment interface, and accept more audited JARs as arguments.
@@ -104,7 +103,7 @@ NODE
   javap -classpath "$PZ_GAME_JAR" -c -p zombie.Lua.LuaEventManager \
     | grep -F 'String OnTickEvenPaused' >/dev/null
   echo "$audit: exact audited JAR and 22 API/event/exposure checks passed."
-  if [[ "$audit" == *'profile 42.21' ]]; then
+  if [[ "$audit" == *'profile 42.21' || "$audit" == *'profile 42.22' ]]; then
     PZ_GAME_JAR="$PZ_GAME_JAR" bash "$repo_root/tests/integration/run.sh"
   fi
 done

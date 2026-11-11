@@ -7,12 +7,13 @@ import zombie.gameStates.ChooseGameInfo;
 
 public final class LoaderProbe {
     public static void main(String[] args) throws Exception {
+        if (args.length != 5) throw new IllegalArgumentException("Expected mod root, simulated version, folder, availability, and shipped version");
         ZomboidFileSystem.instance.setCacheDir(System.getProperty("user.home") + "/cache");
         ZomboidFileSystem.instance.init();
         GameVersion actual = Core.getInstance().getGameVersion();
         String shippedVersion = actual.toString();
-        if (!"42.21".equals(shippedVersion)) {
-            throw new AssertionError("This integration matrix targets the 42.21 engine, got " + shippedVersion);
+        if (!args[4].equals(shippedVersion)) {
+            throw new AssertionError("Expected engine " + args[4] + ", got " + shippedVersion);
         }
         GameVersion simulated = GameVersion.parse(args[1]);
         // Test-process override only. No game file or Workshop code is altered.
@@ -30,7 +31,7 @@ public final class LoaderProbe {
             throw new AssertionError("Metadata did not use the selected directory");
         }
         System.out.println("METADATA id=" + mod.getId() + " version=" + mod.getModVersion() + " directory=" + mod.getVersionDir() + " min=" + mod.getVersionMin() + " max=" + mod.getVersionMax() + " available=" + mod.isAvailableSelf());
-        if (args.length > 2 && !selected.equals(args[2])) throw new AssertionError("Wrong profile: " + selected);
-        if (args.length > 3 && mod.isAvailableSelf() != Boolean.parseBoolean(args[3])) throw new AssertionError("Wrong availability");
+        if (!selected.equals(args[2])) throw new AssertionError("Wrong profile: " + selected);
+        if (mod.isAvailableSelf() != Boolean.parseBoolean(args[3])) throw new AssertionError("Wrong availability");
     }
 }

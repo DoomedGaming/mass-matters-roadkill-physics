@@ -14,6 +14,14 @@ if expectedVersion == "42.21" then
     assert(Core.isTargetGameVersion("42.21.0"))
     assert(not Core.isTargetGameVersion("42.20"))
     assert(not Core.isTargetGameVersion("42.22"))
+elseif expectedVersion == "42.22" then
+    assert(Core.isTargetGameVersion("42.22.2"))
+    for _, version in ipairs({
+        "42.20", "42.21", "42.21.0", "42.22.0", "42.22.1",
+        "42.22.3", "42.22.20", "42.22.2.0", "42.23", "43.0",
+    }) do
+        assert(not Core.isTargetGameVersion(version), "unexpected support for " .. version)
+    end
 else
     assert(not Core.isTargetGameVersion(expectedVersion .. ".0"))
 end

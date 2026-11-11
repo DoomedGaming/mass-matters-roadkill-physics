@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "projectZomboid": {
     "profiles": [
       {
@@ -27,6 +27,20 @@
             "version": "42.21.0",
             "steamBuildId": "25485521",
             "jarSha256": "e1a69eb743ede60b213a0fe7f8b83d4fcab773036d256cc4543a336f3b058a33"
+          }
+        ]
+      },
+      {
+        "folder": "42.22",
+        "modVersion": "1.2.0",
+        "runtimeVersions": ["42.22", "42.22.2"],
+        "versionMin": "42.22.2",
+        "versionMax": "42.22.2",
+        "auditedBuilds": [
+          {
+            "version": "42.22.2",
+            "steamBuildId": "26486631",
+            "jarSha256": "3c4a7c5f149d784758c6fb5f8fa85f3a21d572e38bc081400e89035f8120d287"
           }
         ]
       }

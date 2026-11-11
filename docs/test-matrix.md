@@ -2,12 +2,12 @@
 
 Use a disposable save cloned from one fixed baseline. Run vanilla and modded passes with the same vehicle condition, tire pressure, fuel, cargo, target, approach line, weather, and commanded speed. Record video or telemetry from immediately before contact until the vehicle settles.
 
-Version 1.1.0 preserves the original 42.20 profile and adds a separate 42.21 profile. Original gameplay evidence covers 42.20.0; the 42.21 engine audit and automated tests pass, but the real gameplay gates below remain pending. Run the new profile on 42.21 and repeat a preserved-profile regression on 42.20 where available. Record exact engine and profile versions with every result. See the [compatibility audit](compatibility-42.21.md).
+Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22.2. Original gameplay evidence covers 42.20.0; real 42.21 and 42.22.2 gameplay gates remain pending. Run the new profile on exactly 42.22.2 and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
 
 ## Automated preflight
 
 ```bash
-./scripts/verify.sh /path/to/42.20/projectzomboid.jar /path/to/42.21/projectzomboid.jar
+./scripts/verify.sh /path/to/42.20/projectzomboid.jar /path/to/42.21/projectzomboid.jar /path/to/42.22.2/projectzomboid.jar
 ./scripts/package-release.sh
 ```
 
@@ -15,9 +15,9 @@ Preflight must pass Lua syntax, formula tests, mocked client/server runtime test
 
 ## Version and upgrade checks
 
-- Confirm 42.20 selects the unchanged `42/` profile and 42.21 selects `42.21/` with the same Mod ID and sandbox values.
+- Confirm 42.20 selects the unchanged `42/` profile, 42.21 selects the unchanged `42.21/` profile, and 42.22.2 selects `42.22/`, all with the same Mod ID and sandbox values.
 - Start a copied existing world with the new package. Confirm no settings or saved progress change merely from the mod update.
-- Confirm the new profile accepts `42.21` and `42.21.0`, and an unrecognized runtime string queues no physics correction.
+- Confirm the new profile accepts the audited engine's `42.22` runtime alias and explicit `42.22.2`. Unrecognized strings such as `42.22.0`, `42.22.1`, and `42.22.3` must register no client physics hooks and queue no correction. Verify the JAR hash separately because a future engine can reuse the `42.22` alias. The preserved 42.21 profile still accepts `42.21` and `42.21.0`.
 - After publication, repeat profile-selection and checksum checks with Steam-downloaded files rather than a local development copy.
 
 ## Single-player matrix

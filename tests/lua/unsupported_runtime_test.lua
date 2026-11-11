@@ -1,13 +1,21 @@
-local clientPath = assert(arg[1], "42.21 client Lua path is required")
-local serverPath = assert(arg[2], "42.21 server Lua path is required")
-local sharedDirectory = assert(arg[3], "42.21 shared Lua directory is required")
+local clientPath = assert(arg[1], "client Lua path is required")
+local serverPath = assert(arg[2], "server Lua path is required")
+local sharedDirectory = assert(arg[3], "shared Lua directory is required")
+local targetVersion = arg[4] or "42.21"
 package.path = sharedDirectory .. "/?.lua;" .. package.path
 
 local originalPrint = print
-local unsupportedVersions = {
-    "42.20", "42.20.0", "42.20.4", "42.21.1", "42.21.10",
-    "42.22", "43.0", "142.21", "42.210", "42.21-unstable",
-}
+local unsupportedVersions = assert(({
+    ["42.21"] = {
+        "42.20", "42.20.0", "42.20.4", "42.21.1", "42.21.10",
+        "42.22", "42.22.2", "43.0", "142.21", "42.210", "42.21-unstable",
+    },
+    ["42.22"] = {
+        "42.20", "42.20.0", "42.21", "42.21.0", "42.21.1",
+        "42.22.0", "42.22.1", "42.22.3", "42.22.20", "42.22.2.0",
+        "42.23", "43.0", "142.22.2", "42.220.2", "42.22.2-unstable", "",
+    },
+})[targetVersion], "No negative-runtime matrix for " .. targetVersion)
 
 for _, runtimeVersion in ipairs(unsupportedVersions) do
     package.loaded.DoomedRoadkillPhysics_Core = nil
@@ -48,7 +56,7 @@ for _, runtimeVersion in ipairs(unsupportedVersions) do
         "unsupported client registered an event on " .. runtimeVersion)
     assert(#messages == 1, "unsupported client must emit one version warning")
     assert(messages[1]:find("WARNING:", 1, true))
-    assert(messages[1]:find("42.21", 1, true))
+    assert(messages[1]:find(targetVersion, 1, true))
     assert(messages[1]:find(runtimeVersion, 1, true))
     assert(messages[1]:find("corrections disabled", 1, true))
 
@@ -65,4 +73,5 @@ for _, runtimeVersion in ipairs(unsupportedVersions) do
 end
 
 print = originalPrint
-print("Unsupported-version client safety and server diagnostics tests passed.")
+print("Unsupported-version client safety and server diagnostics tests passed for "
+    .. targetVersion .. " (" .. #unsupportedVersions .. " rejected runtimes).")

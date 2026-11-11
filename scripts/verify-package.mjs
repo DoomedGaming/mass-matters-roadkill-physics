@@ -26,14 +26,23 @@ assert.match(release.version, /^\d+\.\d+\.\d+$/);
 assert.equal(release.modId, 'DoomedRoadkillPhysics');
 assert.equal(release.workshopId, '3776615501');
 assert.equal(release.distribution, 'steam-workshop-lua-only');
-assert.deepEqual(release.projectZomboid.profiles.map(p => p.folder), ['42', '42.21']);
-const fixture = JSON.parse(read(path.join(root, 'tests/fixtures/legacy-1.0.0.json')));
-const legacyFiles = ['42', 'common'].flatMap(folder => walk(path.join(modRoot, folder)))
-  .map(p => path.relative(modRoot, p)).sort();
-assert.deepEqual(legacyFiles, Object.keys(fixture.paths).sort(), 'Legacy file list changed');
-for (const file of legacyFiles) {
-  assert.equal(hash(path.join(modRoot, file)), fixture.paths[file], `Legacy file changed: ${file}`);
+assert.deepEqual(release.projectZomboid.profiles.map(p => p.folder), ['42', '42.21', '42.22']);
+assert.deepEqual(fs.readdirSync(modRoot, { withFileTypes: true })
+  .filter(entry => entry.isDirectory()).map(entry => entry.name).sort(),
+['42', '42.21', '42.22', 'common'], 'Unexpected profile directory');
+let preservedFiles = 0;
+for (const [version, folders] of [['1.0.0', ['42', 'common']], ['1.1.0', ['42.21']]]) {
+  const fixture = JSON.parse(read(path.join(root, `tests/fixtures/legacy-${version}.json`)));
+  const files = folders.flatMap(folder => walk(path.join(modRoot, folder)))
+    .map(p => path.relative(modRoot, p)).sort();
+  assert.deepEqual(files, Object.keys(fixture.paths).sort(), `Legacy ${version} file list changed`);
+  for (const file of files) {
+    assert.equal(hash(path.join(modRoot, file)), fixture.paths[file], `Legacy file changed: ${file}`);
+  }
+  preservedFiles += files.length;
 }
+assert.equal(hash(path.join(packageRoot, 'release.json')), hash(path.join(root, 'release.json')),
+  'Packaged release metadata differs from source');
 
 for (const profile of release.projectZomboid.profiles) {
   const dir = path.join(modRoot, profile.folder);
@@ -57,7 +66,10 @@ for (const profile of release.projectZomboid.profiles) {
 
 // Sandbox names/defaults and assets are identical in the new profile, preserving saves.
 for (const file of ['media/sandbox-options.txt', 'media/lua/shared/Translate/EN/Sandbox.json', 'poster.png']) {
-  assert.equal(hash(path.join(modRoot, '42', file)), hash(path.join(modRoot, '42.21', file)), file);
+  for (const profile of release.projectZomboid.profiles.slice(1)) {
+    assert.equal(hash(path.join(modRoot, '42', file)), hash(path.join(modRoot, profile.folder, file)),
+      `${profile.folder}/${file}`);
+  }
 }
 const workshop = properties(path.join(packageRoot, 'workshop/workshop.txt'));
 assert.equal(workshop.id, release.workshopId, 'Updates must target the existing Workshop item');
@@ -67,8 +79,8 @@ for (const file of walk(path.join(packageRoot, 'workshop'))) {
 }
 for (const file of [
   'README.md', 'CHANGELOG.md', 'LICENSE.md', 'docs/physics-notes.md',
-  'docs/compatibility-42.21.md', 'docs/test-matrix.md', 'docs/multiplayer.md',
+  'docs/compatibility-42.21.md', 'docs/compatibility-42.22.2.md', 'docs/test-matrix.md', 'docs/multiplayer.md',
   `docs/release-notes-${release.version}.md`, 'docs/steam-workshop-release.md',
 ]) assert(fs.statSync(path.join(packageRoot, file)).isFile(), `Missing ${file}`);
 
-console.log(`Package metadata verified; ${legacyFiles.length} legacy files match v1.0.0 byte-for-byte.`);
+console.log(`Package metadata verified; ${preservedFiles} files across 42/, 42.21/, and common/ preserved byte-for-byte.`);
