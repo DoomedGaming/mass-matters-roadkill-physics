@@ -51,6 +51,11 @@ for (const profile of release.projectZomboid.profiles) {
   assert.equal(info.modversion, profile.modVersion);
   assert.equal(info.versionMin, profile.versionMin);
   assert.equal(info.versionMax, profile.versionMax);
+  if (profile.folder === '42.22') {
+    assert.equal(profile.runtimeVersionPolicy, 'major-minor');
+    assert.equal(info.versionMin, profile.folder, 'Minimum must use major/minor only');
+    assert.equal(info.versionMax, profile.folder, 'Maximum must lock the same major/minor');
+  }
   assert(profile.auditedBuilds.length > 0);
   for (const build of profile.auditedBuilds) {
     assert.match(build.jarSha256, /^[a-f0-9]{64}$/);

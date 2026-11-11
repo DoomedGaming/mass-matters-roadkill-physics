@@ -33,9 +33,10 @@
       {
         "folder": "42.22",
         "modVersion": "1.2.0",
-        "runtimeVersions": ["42.22", "42.22.2"],
-        "versionMin": "42.22.2",
-        "versionMax": "42.22.2",
+        "runtimeVersionPolicy": "major-minor",
+        "runtimeVersions": ["42.22", "42.22.0", "42.22.1", "42.22.2", "42.22.3", "42.22.20", "42.22.999999"],
+        "versionMin": "42.22",
+        "versionMax": "42.22",
         "auditedBuilds": [
           {
             "version": "42.22.2",

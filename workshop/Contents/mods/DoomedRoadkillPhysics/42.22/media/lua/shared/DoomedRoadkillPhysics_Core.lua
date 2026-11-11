@@ -8,9 +8,11 @@ Core.TARGET_GAME_VERSION = "42.22"
 
 function Core.isTargetGameVersion(value)
     local version = tostring(value)
-    -- The audited 42.22.2 client reports 42.22 through getVersionNumber().
+    -- Keep the major/minor locked while accepting any numeric patch version.
+    -- The game may also report just the major/minor without a patch suffix.
+    local majorMinor = version:match("^(%d+%.%d+)%.%d+$")
     return version == Core.TARGET_GAME_VERSION
-        or version == "42.22.2"
+        or majorMinor == Core.TARGET_GAME_VERSION
 end
 
 local function finitePositive(value)

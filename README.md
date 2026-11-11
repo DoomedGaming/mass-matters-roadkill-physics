@@ -9,16 +9,16 @@ A mouse or rat should not stop a road vehicle, and a single corpse should not la
 
 ## Compatibility and validation
 
-**Version 1.2.0** adds a separate Build 42.22.2 profile while preserving the existing `42/`, `42.21/`, and `common/` files byte for byte. The 42.22.2 engine audit and automated checks pass.
+**Version 1.2.0** adds a separate Build 42.22.x profile while preserving the existing `42/`, `42.21/`, and `common/` files byte for byte. The 42.22.2 engine audit and automated checks pass.
 
 | Game version | Package behavior | Validation |
 | --- | --- | --- |
 | 42.20.x | Loads the unchanged `42/` profile from release 1.0.0 | Original gameplay testing was on 42.20.0; each later 42.20 patch has not been independently certified |
 | 42.21 or 42.21.0 | Loads the unchanged `42.21/` profile | Prior engine/API audit and automated tests pass |
-| 42.22.2 | Loads the new `42.22/` profile | Engine/API and automated checks pass |
+| 42.22 and 42.22.x | Loads the new `42.22/` profile for any numeric patch | Engine/API audit covers 42.22.2; automated checks cover the version policy |
 | Other versions | No compatibility claim | The new profile skips physics on an unrecognized runtime version |
 
-The new profile accepts `42.22`, the runtime string reported by the audited 42.22.2 client, and `42.22.2`. It rejects other strings, including `42.22.0`, `42.22.1`, and `42.22.3`. The runtime gate cannot distinguish a future engine that also reports `42.22`; the exact JAR check runs only in the developer verifier. The preserved 42.21 profile still accepts `42.21` and `42.21.0`. Build 41 and builds earlier than 42.20 remain outside this package's support range.
+The new profile accepts `42.22` and `42.22.<digits>`, including future numeric patches such as `42.22.3` or `42.22.20`, without a mod update. It keeps major and minor versions locked: `42.23.x`, `43.x`, and malformed version strings are rejected. The exact JAR check records the engine examined by the developer verifier; it does not block installation on another 42.22 patch. The preserved 42.21 profile still accepts `42.21` and `42.21.0`. Build 41 and builds earlier than 42.20 remain outside this package's support range.
 
 The Mod ID, Workshop item, sandbox option names, and defaults stay the same. Existing worlds need no save migration. See the [42.22.2 compatibility audit](docs/compatibility-42.22.2.md) for evidence and testing limits. The [42.21 audit](docs/compatibility-42.21.md) records the earlier profile.
 

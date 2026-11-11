@@ -18,7 +18,7 @@ An existing world does not require save migration. If its sandbox data predates 
 
 ## Versioned package
 
-Version 1.2.0 preserves `42/`, `42.21/`, and `common/` unchanged and adds `42.22/` for the audited 42.22.2 build. The game selects the profile appropriate to its version. Keep the full package on server and clients; do not distribute only the new directory.
+Version 1.2.0 preserves `42/`, `42.21/`, and `common/` unchanged and adds `42.22/` for 42.22 and every numeric 42.22.x patch. Normal 42.22 patch updates load without a mod update; other major/minor versions remain outside this profile's bounds. The game selects the profile appropriate to its version. Keep the full package on server and clients; do not distribute only the new directory.
 
 Original connected-driving evidence applies to 42.20.0. See the [42.22.2 compatibility audit](compatibility-42.22.2.md) and the historical [42.21 audit](compatibility-42.21.md).
 

@@ -62,8 +62,11 @@ done <<'MATRIX'
 42.22.1 42.22 true
 42.22.2 42.22 true
 42.22.3 42.22 true
+42.22.20 42.22 true
+42.22.999999 42.22 true
 42.23 42.22 false
 43.0 42.22 false
+43.22 42.22 false
 MATRIX
 
 while read -r folder version enabled; do
@@ -82,15 +85,24 @@ done <<'MATRIX'
 42.22 42.21 false
 42.22 42.21.0 false
 42.22 42.22 true
-42.22 42.22.0 false
-42.22 42.22.1 false
+42.22 42.22.0 true
+42.22 42.22.1 true
 42.22 42.22.2 true
-42.22 42.22.3 false
-42.22 42.22.20 false
+42.22 42.22.3 true
+42.22 42.22.20 true
+42.22 42.22.999999 true
+42.22 42.22.0002 true
+42.22 42.22.12345678901234567890 true
 42.22 42.22.2.0 false
+42.22 42.22. false
+42.22 42.22.+1 false
+42.22 42.22.1-beta false
+42.22 142.22.2 false
+42.22 42.220.2 false
 42.22 42.22-debug false
 42.22 42.23 false
 42.22 43.0 false
+42.22 43.22 false
 MATRIX
 
 echo "Installed $engine_version loader and Kahlua integration checks passed; gameplay is not exercised."

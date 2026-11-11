@@ -2,7 +2,7 @@
 
 Use a disposable save cloned from one fixed baseline. Run vanilla and modded passes with the same vehicle condition, tire pressure, fuel, cargo, target, approach line, weather, and commanded speed. Record video or telemetry from immediately before contact until the vehicle settles.
 
-Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22.2. Run the new profile on exactly 42.22.2 and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
+Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22 and every numeric 42.22.x patch. Run the new profile on the 42.22 patch being evaluated and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
 
 ## Automated preflight
 
@@ -15,9 +15,9 @@ Preflight must pass Lua syntax, formula tests, mocked client/server runtime test
 
 ## Version and upgrade checks
 
-- Confirm 42.20 selects the unchanged `42/` profile, 42.21 selects the unchanged `42.21/` profile, and 42.22.2 selects `42.22/`, all with the same Mod ID and sandbox values.
+- Confirm 42.20 selects the unchanged `42/` profile, 42.21 selects the unchanged `42.21/` profile, and 42.22.x selects `42.22/`, all with the same Mod ID and sandbox values.
 - Start a copied existing world with the new package. Confirm no settings or saved progress change merely from the mod update.
-- Confirm the new profile accepts the audited engine's `42.22` runtime alias and explicit `42.22.2`. Unrecognized strings such as `42.22.0`, `42.22.1`, and `42.22.3` must register no client physics hooks and queue no correction. Verify the JAR hash separately because a future engine can reuse the `42.22` alias. The preserved 42.21 profile still accepts `42.21` and `42.21.0`.
+- Confirm the new profile accepts `42.22` and any numeric patch such as `42.22.0`, `42.22.1`, `42.22.2`, `42.22.3`, `42.22.20`, or `42.22.999999`. Other major/minor versions such as `42.23.0` and `43.0.0`, and malformed strings, must register no client physics hooks and queue no correction. Record the audited JAR identity separately from this loading policy. The preserved 42.21 profile still accepts `42.21` and `42.21.0`.
 - After publication, repeat profile-selection and checksum checks with Steam-downloaded files rather than a local development copy.
 
 ## Single-player matrix

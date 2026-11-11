@@ -1,6 +1,6 @@
 # Build 42.22.2 compatibility audit
 
-Version 1.2.0 adds a separate `42.22/` profile. The existing `42/`, `42.21/`, and `common/` files remain byte for byte unchanged. Workshop item `3776615501`, Mod ID `DoomedRoadkillPhysics`, sandbox keys, defaults, and saved-world data stay the same.
+Version 1.2.0 adds a separate `42.22/` profile for 42.22 and every numeric 42.22.x patch. This document records the specific 42.22.2 engine examined for that profile. The existing `42/`, `42.21/`, and `common/` files remain byte for byte unchanged. Workshop item `3776615501`, Mod ID `DoomedRoadkillPhysics`, sandbox keys, defaults, and saved-world data stay the same.
 
 The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. Package loading and automated checks cannot prove vehicle handling or network convergence.
 
@@ -10,9 +10,11 @@ The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks
 | --- | --- | --- | --- |
 | 42.22.2 | 26486631 | `3c4a7c5f149d784758c6fb5f8fa85f3a21d572e38bc081400e89035f8120d287` | `42.22` |
 
-The inspected client initializes `GameVersion` with major 42, minor 22, and an empty suffix. Its Lua `getVersionNumber()` therefore returns `42.22`, even though Steam distributes it as 42.22.2. The new profile accepts that observed string and explicit `42.22.2`. It rejects other strings, including `42.22.0`, `42.22.1`, `42.22.3`, and debug suffixes, before allocating client vectors or registering client physics callbacks.
+The inspected client initializes `GameVersion` with major 42, minor 22, and an empty suffix. Its Lua `getVersionNumber()` therefore returns `42.22`, even though Steam distributes it as 42.22.2. The new profile accepts that string and `42.22.<digits>` with any numeric patch number. Normal future 42.22 patches load without a mod update. Other major/minor versions and malformed strings return before client vectors or physics callbacks are created.
 
-This is a version-string guard, not runtime JAR verification. A future or older engine that also reports `42.22` passes the guard. The game's metadata comparison also uses major and minor components, so `versionMin=42.22.2` and `versionMax=42.22.2` cannot enforce the patch number. Recheck the binary after Steam updates it. The developer verifier rejects unknown JAR hashes; the distributed Lua mod does not inspect or modify the game binary.
+The metadata uses `versionMin=42.22` and `versionMax=42.22`, matching the game's major/minor comparison. The Lua guard also locks major 42 and minor 22; it rejects `42.23.x`, `43.x`, debug suffixes, and incomplete or extra version components.
+
+The exact JAR hash identifies the engine used for this audit. An unknown hash stops the developer's exact-engine verification command, not mod installation or runtime loading. The distributed Lua mod does not inspect or modify game binaries. The patch policy permits updates within 42.22; it does not guarantee that upstream APIs remain unchanged.
 
 The Steam client build above is distinct from dedicated-server build IDs. This audit identifies the client engine that runs vehicle corrections.
 
@@ -37,8 +39,8 @@ The official [42.22.2 stable notes](https://theindiestone.com/forums/topic/10306
 | 42.20.x | `42/` | Preserved release 1.0.0 behavior; original gameplay evidence covers 42.20.0 |
 | 42.21 or 42.21.0 | `42.21/` | Preserved 1.1.0 profile; prior engine audit passes |
 | 42.21.1 or another unsupported 42.21 string | `42.21/` | Preserved guard disables corrections |
-| Audited 42.22.2 client reporting 42.22, or explicit 42.22.2 | `42.22/` | New 1.2.0 profile enables corrections |
-| 42.22.0, 42.22.1, 42.22.3, or another unsupported string | `42.22/` where selected | Guard disables corrections |
+| 42.22 or 42.22 followed by a numeric patch, including 42.22.0, 42.22.2, and 42.22.20 | `42.22/` | New 1.2.0 profile enables corrections |
+| 42.23.x, 43.x, or a malformed version string | New profile unavailable or rejected | Metadata and runtime guard retain the major/minor boundary |
 
 The package adds no Build 41 implementation. Existing save data requires no migration. Keep every version directory and `common/` together when installing or uploading.
 
@@ -48,11 +50,11 @@ The package adds no Build 41 implementation. Existing save data requires no migr
 | --- | --- |
 | 42.22.2 binary identity and physics inspection | Passed; bundled Java runtime reports `42.22` |
 | Exact JAR/API checks | Passed, 22 API/event/exposure checks |
-| Formula and mocked client/server regressions | Passed for all five supported profile/runtime combinations |
+| Formula and mocked client/server regressions | Passed for 10 supported profile/runtime combinations |
 | Original 42.20 and 42.21 file preservation | Passed, all 20 frozen profile/common files in source, staging, and extracted ZIP |
 | Release archive and Workshop staging | ZIP integrity, SHA-256, staging equality, and Lua-only payload checks passed |
-| Installed-engine loader and Kahlua checks | Passed, 14 loader cases and 22 Kahlua cases on the installed 42.22.2 client |
-| Unsupported-version Lua guards | Passed, 11 rejected strings for 42.21 and 16 for 42.22 |
+| Installed-engine loader and Kahlua checks | Passed, 17 loader cases and 31 Kahlua cases on the installed 42.22.2 client |
+| Runtime version guards | Passed, numeric 42.22 patches accepted; 37 unsupported strings rejected, 11 for 42.21 and 26 for 42.22 |
 | Original 42.20.0 gameplay evidence | Retained from release 1.0.0 |
 | Workshop upload and downloaded-content verification | Pending |
 
