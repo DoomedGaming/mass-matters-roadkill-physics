@@ -51,7 +51,7 @@ Only a vehicle with `isLocalPhysicSim()` is corrected. Normal vehicle synchroniz
 
 ## Installation
 
-Subscribe to [Mass Matters: Roadkill Physics on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501), enable it for the world, and restart normally when adding or updating the mod. The public Workshop item remains at its last published version until version 1.2.0 is uploaded.
+Subscribe to [Mass Matters: Roadkill Physics on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501), enable it for the world, and restart normally when adding or updating the mod. Version 1.2.0 was published to the existing Workshop item on 2026-11-11.
 
 For a manual test, copy `workshop/Contents/mods/DoomedRoadkillPhysics` from the release archive into your user `Zomboid/mods/` directory. Copy the complete mod folder, including all three version directories and `common/`. Use a disposable save and avoid loading both the development and subscribed copies.
 

@@ -13,8 +13,8 @@ The exact JAR check identifies the engine used for the developer audit. It does 
 
 ## Validation and installation
 
-The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. All 20 existing profile/common files match their frozen hashes in source, staging, and the extracted ZIP. Original gameplay evidence applies to 42.20.0. Version 1.2.0 is prepared for upload and has not yet been published to Steam Workshop.
+The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. All 20 existing profile/common files match their frozen hashes in source, staging, and the extracted ZIP. Original gameplay evidence applies to 42.20.0. Version 1.2.0 was published to the existing Steam Workshop item on 2026-11-11.
 
 For an isolated test, copy the complete `DoomedRoadkillPhysics` folder from `mass-matters-roadkill-physics-v1.2.0.zip`, including all three version directories and `common/`. Verify the archive with `sha256sum -c SHA256SUMS.txt` from its directory. Avoid loading a subscribed copy and development copy together.
 
-After publication, use the existing [Steam Workshop item](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501). Servers retain `WorkshopItems=3776615501` and `Mods=DoomedRoadkillPhysics` with `DoLuaChecksum=true`. A normal server restart loads an update; schedule it separately from package preparation. No save migration is required.
+Use the existing [Steam Workshop item](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501). Servers retain `WorkshopItems=3776615501` and `Mods=DoomedRoadkillPhysics` with `DoLuaChecksum=true`. A normal server restart loads an update; schedule it separately from package preparation. No save migration is required.

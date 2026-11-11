@@ -56,7 +56,8 @@ The package adds no Build 41 implementation. Existing save data requires no migr
 | Installed-engine loader and Kahlua checks | Passed, 17 loader cases and 31 Kahlua cases on the installed 42.22.2 client |
 | Runtime version guards | Passed, numeric 42.22 patches accepted; 37 unsupported strings rejected, 11 for 42.21 and 26 for 42.22 |
 | Original 42.20.0 gameplay evidence | Retained from release 1.0.0 |
-| Workshop upload and downloaded-content verification | Pending |
+| Workshop publication | Published 2026-11-11 to public item `3776615501`; live title and 1.2.0 description verified |
+| Steam-downloaded content hashes | Passed, all 30 files match the release, including all nine new `42.22/` files |
 
 Run the exact-engine verifier with available audited JARs, then package:
 
