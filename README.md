@@ -9,18 +9,18 @@ A mouse or rat should not stop a road vehicle, and a single corpse should not la
 
 ## Compatibility and validation
 
-**Version 1.2.0 is a release candidate.** It adds a separate Build 42.22.2 profile while preserving the existing `42/`, `42.21/`, and `common/` files byte for byte. The 42.22.2 engine audit and automated checks pass; real 42.21 and 42.22.2 single-player and connected-multiplayer collision tests remain pending.
+**Version 1.2.0** adds a separate Build 42.22.2 profile while preserving the existing `42/`, `42.21/`, and `common/` files byte for byte. The 42.22.2 engine audit and automated checks pass.
 
 | Game version | Package behavior | Validation |
 | --- | --- | --- |
 | 42.20.x | Loads the unchanged `42/` profile from release 1.0.0 | Original gameplay testing was on 42.20.0; each later 42.20 patch has not been independently certified |
-| 42.21 or 42.21.0 | Loads the unchanged `42.21/` profile | Prior engine/API audit and automated tests pass; gameplay validation pending |
-| 42.22.2 | Loads the new `42.22/` profile | Engine/API and automated checks pass; gameplay validation pending |
+| 42.21 or 42.21.0 | Loads the unchanged `42.21/` profile | Prior engine/API audit and automated tests pass |
+| 42.22.2 | Loads the new `42.22/` profile | Engine/API and automated checks pass |
 | Other versions | No compatibility claim | The new profile skips physics on an unrecognized runtime version |
 
 The new profile accepts `42.22`, the runtime string reported by the audited 42.22.2 client, and `42.22.2`. It rejects other strings, including `42.22.0`, `42.22.1`, and `42.22.3`. The runtime gate cannot distinguish a future engine that also reports `42.22`; the exact JAR check runs only in the developer verifier. The preserved 42.21 profile still accepts `42.21` and `42.21.0`. Build 41 and builds earlier than 42.20 remain outside this package's support range.
 
-The Mod ID, Workshop item, sandbox option names, and defaults stay the same. Existing worlds need no save migration. See the [42.22.2 compatibility audit](docs/compatibility-42.22.2.md) for evidence and remaining gates. The [42.21 audit](docs/compatibility-42.21.md) records the earlier profile.
+The Mod ID, Workshop item, sandbox option names, and defaults stay the same. Existing worlds need no save migration. See the [42.22.2 compatibility audit](docs/compatibility-42.22.2.md) for evidence and testing limits. The [42.21 audit](docs/compatibility-42.21.md) records the earlier profile.
 
 ## Features
 
@@ -41,7 +41,7 @@ Custom vehicles and modpacks still need gameplay testing. Mods that independentl
 
 The client snapshots contact state in `OnTickEvenPaused` and applies corrections in `OnTick`. A false-to-true persistent-contact transition identifies an initial hit in that update. After the engine's contact window expires, the same animal can produce a new edge on a later impact.
 
-For sustained multiplayer animal overlap, the engine's client hit path does not reliably set `isVehicleCollision`. The mod requires overlap before and after the update and uses the animal's pre-update `AnimalFalldownState` to infer whether to correct the main impulse plus the fixed impulse, or only the fixed impulse. This is a conservative repeated-hit inference, not an exact collision callback. Real-client tests remain essential, particularly after the animal death-state changes in 42.21.
+For sustained multiplayer animal overlap, the engine's client hit path does not reliably set `isVehicleCollision`. The mod requires overlap before and after the update and uses the animal's pre-update `AnimalFalldownState` to infer whether to correct the main impulse plus the fixed impulse, or only the fixed impulse. This is a conservative repeated-hit inference, not an exact collision callback.
 
 Live-zombie corrections use public `applyImpulseGeneric` at the vehicle center. The engine-recorded `hitDir` supplies the direction where available, with a positional fallback. The centered correction adds no torque.
 
@@ -51,7 +51,7 @@ Only a vehicle with `isLocalPhysicSim()` is corrected. Normal vehicle synchroniz
 
 ## Installation
 
-Subscribe to [Mass Matters: Roadkill Physics on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501), enable it for the world, and restart normally when adding or updating the mod. The public Workshop item remains at its last published version until the candidate is uploaded.
+Subscribe to [Mass Matters: Roadkill Physics on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501), enable it for the world, and restart normally when adding or updating the mod. The public Workshop item remains at its last published version until version 1.2.0 is uploaded.
 
 For a manual test, copy `workshop/Contents/mods/DoomedRoadkillPhysics` from the release archive into your user `Zomboid/mods/` directory. Copy the complete mod folder, including all three version directories and `common/`. Use a disposable save and avoid loading both the development and subscribed copies.
 

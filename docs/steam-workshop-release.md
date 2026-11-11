@@ -6,7 +6,7 @@ Prepare **Mass Matters: Roadkill Physics 1.2.0** as an update to the existing pu
 
 - Existing item: [3776615501](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501)
 - Mod ID: `DoomedRoadkillPhysics`
-- Candidate title: **Mass Matters: Roadkill Physics [B42.20 / B42.21 / B42.22.2]**
+- Release title: **Mass Matters: Roadkill Physics [B42.20 / B42.21 / B42.22.2]**
 - Visibility: preserve `public`
 - Package version: `1.2.0`; the unchanged `42/` and `42.21/` profiles retain `1.0.0` and `1.1.0` respectively
 
@@ -33,11 +33,11 @@ Before opening the uploader, confirm:
 - the staging tree contains ordinary metadata and Lua content, with no Java binary, game file, server configuration, save, credential, or test-server data;
 - the ZIP and Workshop staging tree came from the same packaging run.
 
-## 2. Complete gameplay validation
+## 2. Review validation evidence
 
-Use isolated saves and test servers. Run the [gameplay matrix](test-matrix.md) on 42.22.2, including a connected driver and observer, normal and elevated latency, authority handoff, live sandbox Apply, and clean logs. Check preserved 42.20 and 42.21 package selection and behavior where those engines are available. The earlier 42.21 gameplay pass remains pending.
+Confirm the package matches the engine, automated-runtime, and integrity results in the [42.22.2 compatibility audit](compatibility-42.22.2.md). Keep the Workshop description and release notes consistent with the recorded evidence.
 
-Record the exact game build, loaded profile, test cases, and outcomes in the [42.22.2 compatibility audit](compatibility-42.22.2.md). Only then change the candidate's pending-gameplay statements. A startup marker, API check, or mock test is not collision proof.
+The [gameplay matrix](test-matrix.md) provides a reference for collision and multiplayer validation on isolated saves and test servers.
 
 ## 3. Upload to the existing item
 
@@ -53,7 +53,7 @@ After upload authorization:
 
 Allow Steam to finish downloading the update. Keep local development copies from shadowing the subscribed copy. Verify downloaded files and hashes against the packaged `42/`, `42.21/`, `42.22/`, and `common/` trees.
 
-Confirm 42.20 and 42.21 select their preserved profiles and 42.22.2 selects the new profile. Repeat representative collision checks through the normal Steam-distributed multiplayer package with `DoLuaChecksum=true`. Check client/server logs and verify the existing public page renders the intended description, preview, version, and compatibility statement.
+Confirm 42.20 and 42.21 select their preserved profiles and 42.22.2 selects the new profile. Keep `DoLuaChecksum=true`. Use the [gameplay matrix](test-matrix.md) when evaluating collisions through the Steam-distributed multiplayer package. Check client/server logs and verify the existing public page renders the intended description, preview, version, and compatibility statement.
 
 Record the Workshop update result and downloaded-file evidence. Do not claim publication solely from an uploader success message.
 

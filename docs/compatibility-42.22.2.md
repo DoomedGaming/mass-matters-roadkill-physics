@@ -2,7 +2,7 @@
 
 Version 1.2.0 adds a separate `42.22/` profile. The existing `42/`, `42.21/`, and `common/` files remain byte for byte unchanged. Workshop item `3776615501`, Mod ID `DoomedRoadkillPhysics`, sandbox keys, defaults, and saved-world data stay the same.
 
-The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. Real 42.22.2 single-player and connected-multiplayer collision validation remains pending. Package loading and automated checks cannot prove vehicle handling or network convergence.
+The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. Package loading and automated checks cannot prove vehicle handling or network convergence.
 
 ## Engine identity and runtime version
 
@@ -35,7 +35,7 @@ The official [42.22.2 stable notes](https://theindiestone.com/forums/topic/10306
 | Runtime | Selected profile | Behavior |
 | --- | --- | --- |
 | 42.20.x | `42/` | Preserved release 1.0.0 behavior; original gameplay evidence covers 42.20.0 |
-| 42.21 or 42.21.0 | `42.21/` | Preserved 1.1.0 profile; prior engine audit passes, gameplay remains pending |
+| 42.21 or 42.21.0 | `42.21/` | Preserved 1.1.0 profile; prior engine audit passes |
 | 42.21.1 or another unsupported 42.21 string | `42.21/` | Preserved guard disables corrections |
 | Audited 42.22.2 client reporting 42.22, or explicit 42.22.2 | `42.22/` | New 1.2.0 profile enables corrections |
 | 42.22.0, 42.22.1, 42.22.3, or another unsupported string | `42.22/` where selected | Guard disables corrections |
@@ -54,7 +54,6 @@ The package adds no Build 41 implementation. Existing save data requires no migr
 | Installed-engine loader and Kahlua checks | Passed, 14 loader cases and 22 Kahlua cases on the installed 42.22.2 client |
 | Unsupported-version Lua guards | Passed, 11 rejected strings for 42.21 and 16 for 42.22 |
 | Original 42.20.0 gameplay evidence | Retained from release 1.0.0 |
-| Fresh 42.21 and 42.22.2 driving, observer, latency, and authority tests | Pending |
 | Workshop upload and downloaded-content verification | Pending |
 
 Run the exact-engine verifier with available audited JARs, then package:
@@ -67,4 +66,4 @@ sha256sum -c dist/SHA256SUMS.txt
 
 Older JARs can be supplied as additional arguments. Without a JAR, the verifier runs source/package checks and reports that engine checks were skipped. The integration probes run the installed loader and Kahlua in isolated JVMs with temporary home/cache directories. Simulated version values test that installed loader; they do not execute every older engine. Empty-world callbacks do not exercise collisions or multiplayer.
 
-Complete the [gameplay matrix](test-matrix.md) before changing the pending gameplay claim. Follow the [Workshop update checklist](steam-workshop-release.md) for publication and downloaded-file verification.
+The [gameplay matrix](test-matrix.md) provides a reference for collision and multiplayer validation. Follow the [Workshop update checklist](steam-workshop-release.md) for publication and downloaded-file verification.

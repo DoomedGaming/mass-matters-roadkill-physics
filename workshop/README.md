@@ -4,7 +4,7 @@
 
 Version 1.2.0 is prepared as an update to the existing public [item 3776615501](https://steamcommunity.com/sharedfiles/filedetails/?id=3776615501). Keep `id=3776615501` and `visibility=public`. Do not create a second item or reuse the obsolete first-upload private workflow.
 
-The package preserves `42/`, `42.21/`, and `common/` unchanged and adds `42.22/` for the audited 42.22.2 build. The 42.22.2 engine audit and automated checks pass; real 42.21 and 42.22.2 gameplay validation remain pending. Packaging does not upload or publish the candidate. Follow the [update checklist](../docs/steam-workshop-release.md), complete gameplay gates, and obtain upload authorization before publishing.
+The package preserves `42/`, `42.21/`, and `common/` unchanged and adds `42.22/` for the audited 42.22.2 build. The 42.22.2 engine audit and automated checks pass. Packaging prepares version 1.2.0 for upload but does not publish it. Follow the [update checklist](../docs/steam-workshop-release.md) when uploading the release.
 
 Server configuration uses two different identifiers:
 

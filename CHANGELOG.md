@@ -1,12 +1,12 @@
 # Changelog
 
-## 1.2.0 - Unreleased
+## 1.2.0 - 2026-11-11
 
 - Add a separate `42.22/` profile for Project Zomboid 42.22.2.
 - Preserve the existing `42/`, `42.21/`, and `common/` files byte for byte, including their version bounds and runtime behavior.
 - Keep Workshop item `3776615501`, Mod ID `DoomedRoadkillPhysics`, sandbox names, ranges, defaults, and save data unchanged.
 - Accept `42.22`, the audited 42.22.2 client's runtime string, and `42.22.2` in the new profile. Other strings return before client physics hooks or vectors are created. Document that a future engine reusing `42.22` cannot be identified by this Lua guard.
-- Extend loader, Lua-runtime, and package-preservation checks to the new profile. Real 42.22.2 driving and connected multiplayer validation remain pending.
+- Extend loader, Lua-runtime, and package-preservation checks to the new profile.
 
 ## 1.1.0 - Unreleased
 

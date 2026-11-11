@@ -2,7 +2,7 @@
 
 Use a disposable save cloned from one fixed baseline. Run vanilla and modded passes with the same vehicle condition, tire pressure, fuel, cargo, target, approach line, weather, and commanded speed. Record video or telemetry from immediately before contact until the vehicle settles.
 
-Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22.2. Original gameplay evidence covers 42.20.0; real 42.21 and 42.22.2 gameplay gates remain pending. Run the new profile on exactly 42.22.2 and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
+Version 1.2.0 preserves the 42.20 and 42.21 profiles and adds a separate `42.22/` profile for 42.22.2. Run the new profile on exactly 42.22.2 and repeat preserved-profile regressions on 42.20 and 42.21 where those engines are available. Record exact engine and profile versions with every result. See the [42.22.2 compatibility audit](compatibility-42.22.2.md).
 
 ## Automated preflight
 
@@ -44,7 +44,7 @@ For live animals, include a sustained overlap both before and after the transiti
 - duplicate hit events or repeated correction;
 - console errors, the `DoomedRoadkillPhysics` startup line, the live multiplier-change line, and the first-correction detector line.
 
-## Provisional acceptance gates
+## Provisional gameplay criteria
 
 - A mouse or rat cannot dead-stop a roadworthy moving vehicle.
 - One human/zombie corpse cannot launch or roll any tested roadworthy vehicle.

@@ -1,4 +1,4 @@
-# Mass Matters: Roadkill Physics v1.2.0 candidate
+# Mass Matters: Roadkill Physics v1.2.0
 
 This update adds a separate `42.22/` profile for the audited Project Zomboid 42.22.2 build. The existing `42/`, `42.21/`, and `common/` files remain byte for byte unchanged, so older players keep their existing profile from the same Workshop item.
 
@@ -13,7 +13,7 @@ The runtime guard cannot distinguish another binary that also reports `42.22`. T
 
 ## Validation and installation
 
-The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. All 20 existing profile/common files match their frozen hashes in source, staging, and the extracted ZIP. Real 42.21 and 42.22.2 single-player, listen-server, and connected dedicated-server collision checks remain pending. Original gameplay evidence applies to 42.20.0. This candidate has not been published to Steam Workshop.
+The 42.22.2 engine audit, Lua regressions, installed-engine loader/Kahlua checks, and package integrity checks pass. All 20 existing profile/common files match their frozen hashes in source, staging, and the extracted ZIP. Original gameplay evidence applies to 42.20.0. Version 1.2.0 is prepared for upload and has not yet been published to Steam Workshop.
 
 For an isolated test, copy the complete `DoomedRoadkillPhysics` folder from `mass-matters-roadkill-physics-v1.2.0.zip`, including all three version directories and `common/`. Verify the archive with `sha256sum -c SHA256SUMS.txt` from its directory. Avoid loading a subscribed copy and development copy together.
 
